@@ -67,11 +67,15 @@ Plug 'vim-syntastic/syntastic'
 
 Plug 'sjl/gundo.vim'
 
-Plug 'Valloric/YouCompleteMe'
+" Plug 'Valloric/YouCompleteMe'
+" Plug 'ycm-core/YouCompleteMe'
 
 Plug 'chr4/nginx.vim'
 Plug 'suan/vim-instant-markdown', {'for': 'markdown'}
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+
+" icon
+Plug 'ryanoasis/vim-devicons'
 call plug#end()
 
 " use vundle to manage plugins
@@ -284,9 +288,8 @@ nnoremap <Leader>r :!%:p<CR>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Snippets
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" snippets
-let g:UltiSnipsSnippetDirectories=["mysnippets"]
 " UltiSnips settings
+let g:UltiSnipsSnippetDirectories=["mysnippets"]
 let g:UltiSnipsExpandTrigger="<leader><tab>"
 let g:UltiSnipsJumpForwardTrigger="<leader><tab>"
 let g:UltiSnipsJumpBackwardTrigger="<leader><s-tab>"
