@@ -74,8 +74,8 @@ Plug 'chr4/nginx.vim'
 Plug 'suan/vim-instant-markdown', {'for': 'markdown'}
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 
-" icon
-Plug 'ryanoasis/vim-devicons'
+" dev icon, need nerd fonts patch
+" Plug 'ryanoasis/vim-devicons'
 call plug#end()
 
 " use vundle to manage plugins
@@ -109,10 +109,10 @@ call plug#end()
 " UI Settings
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " color setting
-" set background=dark
+" set background=light
 " colorscheme solarized
 colorscheme molokai
-"colorscheme phd
+" colorscheme phd
 
 " makes cursor not blink
 set gcr=a:block-blinkon0
@@ -147,6 +147,9 @@ if has('gui_running')
         "set guifont=Consolas\ 14
         "set guifont=Bitstream\ Vera\ Sans\ Mono\ 12,Fixed\ 12
         set guifont=Yahei\ Consolas\ Hybrid\ 14
+        " set guifont=DroidSansMono\ Nerd\ Font\ 14
+        " set guifont=DroidSansMono\ Nerd\ Font\ Mono\ 14
+        " set guifontwide=DroidSansMono\ Nerd\ Font\ Mono\ 14
         set guifontwide=Microsoft\ Yahei\ 14,WenQuanYi\ Zen\ Hei\ 14
         set linespace=2
     elseif has('gui_win32')
