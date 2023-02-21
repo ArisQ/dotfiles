@@ -54,8 +54,8 @@ Plug 'nathanaelkane/vim-indent-guides'
 Plug 'kshenoy/vim-signature'
 Plug 'airblade/vim-gitgutter'
 
-
-"Plug 'SirVer/ultisnips'
+Plug 'SirVer/ultisnips'
+" Plug 'honza/vim-snippets' # snippets for ultisnips engine
 Plug 'Lokaltog/vim-easymotion'
 "Plug 'scrooloose/nerdcommenter'
 Plug 'tpope/vim-commentary'
@@ -73,9 +73,10 @@ Plug 'sjl/gundo.vim'
 Plug 'chr4/nginx.vim'
 Plug 'suan/vim-instant-markdown', {'for': 'markdown'}
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+" Plug 'AndrewRadev/splitjoin.vim' " go split/join struct
 
 " dev icon, need nerd fonts patch
-" Plug 'ryanoasis/vim-devicons'
+Plug 'ryanoasis/vim-devicons'
 call plug#end()
 
 " use vundle to manage plugins
@@ -339,7 +340,7 @@ map <leader>tm :TableModeToggle
 " environment saving and restoring
 " 设置环境保存项
 set sessionoptions="blank,buffers,globals,localoptions,tabpages,sesdir,folds,help,options,resize,winpos,winsize"
-" 保存 undo 历史
+" undo 历史保存路径
 set undodir=~/.undo_history/
 set undofile
 " 保存快捷键
@@ -352,8 +353,6 @@ map <leader>rs :source my.vim<cr> :rviminfo my.viminfo<cr>
 nnoremap <Leader>ud :GundoToggle<CR>
 " 开启保存 undo 历史功能
 set undofile
-" undo 历史保存路径
-set undodir=~/.undo_history/
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -417,6 +416,15 @@ nnoremap <Leader>a :cclose<CR>
 
 " let g:go_fmt_autosave = 0
 " let g:go_fmt_command = "goimports"  " default gopls
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_generate_tags = 1
+" autocmd BufNewFile,BufRead *.go setlocal noexpandtab tabstop=4 shiftwidth=4
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Markdown

@@ -21,8 +21,12 @@ mkdir -p ~/.vim/autoload
 # https://github.com/junegunn/vim-plug/issues/675
 vim +'PlugInstall --sync' +qa
 
-ln -sf ${PWD}/mysnippets ~/.vim/plugged/ultisnips/mysnippets
+ln -sfn ${PWD}/mysnippets ~/.vim/plugged/ultisnips/mysnippets
 ln -sf ${PWD}/ycm_extra_conf.py ~/.vim/.ycm_extra_conf.py
+
+
+# undo history directory
+mkdir -p ~/.undo_history/
 
 ## YouCompleteMe
 # sudo
