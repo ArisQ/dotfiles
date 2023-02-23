@@ -68,15 +68,16 @@ Plug 'vim-syntastic/syntastic'
 Plug 'sjl/gundo.vim'
 
 " Plug 'Valloric/YouCompleteMe'
-" Plug 'ycm-core/YouCompleteMe'
+Plug 'ycm-core/YouCompleteMe'
 
 Plug 'chr4/nginx.vim'
 Plug 'suan/vim-instant-markdown', {'for': 'markdown'}
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-" Plug 'AndrewRadev/splitjoin.vim' " go split/join struct
+" go split/join struct
+" Plug 'AndrewRadev/splitjoin.vim'
 
 " dev icon, need nerd fonts patch
-Plug 'ryanoasis/vim-devicons'
+" Plug 'ryanoasis/vim-devicons'
 call plug#end()
 
 " use vundle to manage plugins
