@@ -36,7 +36,7 @@ return require('packer').startup(function(use)
     use { 'folke/which-key.nvim', config = require 'plugins-config.which-key' }
 
     -- auto completion
-    use 'neovim/nvim-lspconfig'
+    -- use 'neovim/nvim-lspconfig'
     use 'hrsh7th/cmp-nvim-lsp'
     use 'hrsh7th/cmp-buffer'
     use 'hrsh7th/cmp-path'
@@ -52,6 +52,12 @@ return require('packer').startup(function(use)
         'williamboman/mason-lspconfig.nvim',
         'neovim/nvim-lspconfig',
         config = require 'plugins-config.mason'
+    }
+
+    -- search
+    use {
+        'nvim-telescope/telescope.nvim', tag = '0.1.1',
+        requires = { {'nvim-lua/plenary.nvim'} }
     }
 
 
