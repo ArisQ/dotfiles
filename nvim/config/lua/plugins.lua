@@ -1,0 +1,93 @@
+ 
+-- Only required if you have packer configured as `opt`
+-- vim.cmd [[packadd packer.vim]]
+
+-- git config --global --add url."git@github.com:".insteadOf "https://github.com/"
+return require('packer').startup(function(use)
+    use 'wbthomason/packer.nvim'
+
+    -- ui
+    use { 'tomasr/molokai' }
+    use { 'vim-scripts/phd' }
+    use { 'altercation/vim-colors-solarized' }
+
+    use { 'tpope/vim-commentary', event = 'VimEnter' }
+
+    -- :TSUpdate will cause Packer to fail upon the first installation.
+    -- It will run correctly when updating.
+    --
+    -- To install parser, run
+    -- :TSInstall <language_to_install>
+    use { 
+        'nvim-treesitter/nvim-treesitter',
+        event = 'BufEnter',
+        run = ':TSUpdate',
+        config = require 'plugins-config.treesitter',
+    }
+
+    use {
+        'nvim-tree/nvim-tree.lua',
+        requires = {
+            'nvim-tree/nvim-web-devicons', -- optional, for file icons
+        },
+	config = require 'plugins-config.tree',
+    }
+
+    use { 'folke/which-key.nvim', config = require 'plugins-config.which-key' }
+
+    -- auto completion
+    use 'neovim/nvim-lspconfig'
+    use 'hrsh7th/cmp-nvim-lsp'
+    use 'hrsh7th/cmp-buffer'
+    use 'hrsh7th/cmp-path'
+    use 'hrsh7th/cmp-cmdline'
+    -- For ultisnips users.
+    use 'SirVer/ultisnips'
+    use 'quangnguyen30192/cmp-nvim-ultisnips'
+    -- use { 'hrsh7th/nvim-cmp', config = require 'plugins-config.cmp'}
+    use { 'hrsh7th/nvim-cmp'}
+
+    use {
+        'williamboman/mason.nvim',
+        'williamboman/mason-lspconfig.nvim',
+        'neovim/nvim-lspconfig',
+        config = require 'plugins-config.mason'
+    }
+
+
+    use {
+        'ahmedkhalf/project.nvim',
+        config = function()
+            require('project_nvim').setup{}
+        end
+    }
+
+    -- use {
+    --     'lewis6991/gitsigns.nvim',
+    --     config = function()
+    --         require('gitsigns').setup()
+    --     end
+    -- }
+
+    --[[
+
+    -- auto-completion
+    use { 'onsails/lspkind-nvim', event = 'VimEnter' }
+    use { 'hrsh7th/nvim-cmp', after = 'lspkind-nvim', config = require 'plugins-config.cmp' } -- engine
+    use { 'hrsh7th/cmp-nvim-lsp', after = 'nvim-cmp' } -- source
+    use { 'hrsh7th/cmp-path', after = 'nvim-cmp' }
+    use { 'hrsh7th/cmp-buffer', after = 'nvim-cmp' }
+    -- use { 'hrsh7th/cmp-omni', after = 'nvim-cmp' }
+    use { 'quangnguyen30192/cmp-nvim-ultisnips', after = { 'nvim-cmp', 'ultisnips' } }
+    if vim.g.is_mac then use { 'hrsh7th/cmp-emoji', after = 'nvim-cmp' } end
+
+    -- Snippet engine and snippet template
+    use { 'SirVer/ultisnips', event = 'InsertEnter' }
+    use { 'honza/vim-snippets', after = 'ultisnips' }
+
+    -- nvim-lsp configuration (it relies on cmp-nvim-lsp, so it should be loaded after cmp-nvim-lsp).
+    use { 'neovim/nvim-lspconfig', after = 'cmp-nvim-lsp', config = require 'plugins-config.lsp' }
+    --]]
+
+end)
+

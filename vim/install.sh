@@ -22,7 +22,7 @@ mkdir -p ~/.vim/autoload
 vim +'PlugInstall --sync' +qa
 
 ln -sfn ${PWD}/mysnippets ~/.vim/plugged/ultisnips/mysnippets
-ln -sf ${PWD}/ycm_extra_conf.py ~/.vim/.ycm_extra_conf.py
+# ln -sf ${PWD}/ycm_extra_conf.py ~/.vim/.ycm_extra_conf.py # deprecated
 
 
 # undo history directory
