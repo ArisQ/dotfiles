@@ -1,4 +1,4 @@
- 
+
 -- Only required if you have packer configured as `opt`
 -- vim.cmd [[packadd packer.vim]]
 
@@ -18,7 +18,7 @@ return require('packer').startup(function(use)
     --
     -- To install parser, run
     -- :TSInstall <language_to_install>
-    use { 
+    use {
         'nvim-treesitter/nvim-treesitter',
         event = 'BufEnter',
         run = ':TSUpdate',
@@ -36,23 +36,35 @@ return require('packer').startup(function(use)
     use { 'folke/which-key.nvim', config = require 'plugins-config.which-key' }
 
     -- auto completion
-    -- use 'neovim/nvim-lspconfig'
+    -- lsp
+    use {
+        'williamboman/mason.nvim',
+        'williamboman/mason-lspconfig.nvim',
+        -- 'neovim/nvim-lspconfig',
+        config = require 'plugins-config.mason'
+    }
+    use 'neovim/nvim-lspconfig'
     use 'hrsh7th/cmp-nvim-lsp'
     use 'hrsh7th/cmp-buffer'
     use 'hrsh7th/cmp-path'
     use 'hrsh7th/cmp-cmdline'
     -- For ultisnips users.
-    use 'SirVer/ultisnips'
-    use 'quangnguyen30192/cmp-nvim-ultisnips'
-    -- use { 'hrsh7th/nvim-cmp', config = require 'plugins-config.cmp'}
-    use { 'hrsh7th/nvim-cmp'}
-
     use {
-        'williamboman/mason.nvim',
-        'williamboman/mason-lspconfig.nvim',
-        'neovim/nvim-lspconfig',
-        config = require 'plugins-config.mason'
+        'SirVer/ultisnips',
+        config = function()
+            vim.g.UltiSnipsExpandTrigger = '<Plug>(ultisnips_expand)'
+            vim.g.UltiSnipsJumpForwardTrigger = '<Plug>(ultisnips_jump_forward)'
+            vim.g.UltiSnipsJumpBackwardTrigger = '<Plug>(ultisnips_jump_backward)'
+            vim.g.UltiSnipsListSnippets = '<c-x><c-s>'
+            vim.g.UltiSnipsRemoveSelectModeMappings = 0
+        end
     }
+    use 'quangnguyen30192/cmp-nvim-ultisnips'
+    use { 'hrsh7th/nvim-cmp', config = require 'plugins-config.cmp'}
+    -- use { 'hrsh7th/nvim-cmp'}
+
+    -- debug
+    use 'mfussenegger/nvim-dap'
 
     -- search
     use {
