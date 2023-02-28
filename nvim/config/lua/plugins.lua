@@ -107,5 +107,8 @@ return require('packer').startup(function(use)
     use { 'neovim/nvim-lspconfig', after = 'cmp-nvim-lsp', config = require 'plugins-config.lsp' }
     --]]
 
+
+    -- language specific
+    use { 'fatih/vim-go', run = ':GoInstallBinaries' }
 end)
 

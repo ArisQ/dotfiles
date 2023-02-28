@@ -9,6 +9,15 @@ wk.register({
         i = {'<cmd>PackerInstall<cr>', 'Install'},
         c = {'<cmd>PackerCompile<cr>', 'Compile'},
     },
+    -- golang
+    g = {
+        name = 'Golang',
+        b = {'<cmd>GoBuild<cr>', 'Build'},
+        r = {'<cmd>GoRun<cr>', 'Run'},
+        tt = {'<cmd>GoTest<cr>', 'Test'},
+        ta = {'<cmd>GoTest<cr>', 'Test'},
+        tf = {'<cmd>GoTestFunc<cr>', 'Test'},
+    },
 }, { prefix = '<Leader>' })
 
 require 'plugins-config.mason'()

@@ -57,3 +57,44 @@ set expandtab
 "
 " git: diff/history/graph
 
+
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Golang
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" autocmd BufWritePre *.go GoImports
+nnoremap <leader>gb :GoBuild<CR>
+nnoremap <leader>gr :GoRun<CR>
+nnoremap <leader>gt :GoTest<CR>
+
+" bad
+nnoremap <leader>gtf :GoTestFunc<CR>
+
+" https://github.com/fatih/vim-go/wiki/Tutorial
+autocmd FileType go nmap<leader>b <Plug>(go-build)
+autocmd FileType go nmap<leader>r <Plug>(go-run)
+" autocmd FileType go nmap<leader>t <Plug>(go-test)
+autocmd FileType go nmap<leader>tt <Plug>(go-test)
+autocmd FileType go nmap<leader>tf <Plug>(go-test-func)
+autocmd FileType go nmap<leader>tc <Plug>(go-test-compile)
+" autocmd FileType go nmap<leader>c <Plug>(go-coverage)
+" autocmd FileType go nmap<leader>c <Plug>(go-coverage-cleaner)
+" autocmd FileType go nmap<leader>c <Plug>(go-coverage-browser)
+autocmd FileType go nmap<leader>c <Plug>(go-coverage-toggle)
+set autowrite " autowrite when :make
+map <C-n> :cnext<CR>
+map <C-m> :cprevious<CR>
+nnoremap <Leader>a :cclose<CR>
+
+" let g:go_fmt_autosave = 0
+" let g:go_fmt_command = "goimports"  " default gopls
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_generate_tags = 1
+" autocmd BufNewFile,BufRead *.go setlocal noexpandtab tabstop=4 shiftwidth=4
