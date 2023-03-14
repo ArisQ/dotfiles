@@ -1,4 +1,9 @@
+
 return function()
+    local t = function(str)
+        return vim.api.nvim_replace_termcodes(str, true, true, true)
+    end
+
     local cmp = require 'cmp'
 
     -- local lspkind = require("lspkind")
@@ -246,6 +251,14 @@ return function()
     --     capabilities = capabilities
     -- }
 
+    -- Use buffer source for `/`.
+    cmp.setup.cmdline('/', {
+        completion = { autocomplete = false },
+        sources = {
+            -- { name = 'buffer' }
+            { name = 'buffer', opts = { keyword_pattern = [=[[^[:blank:]].*]=] } }
+        }
+    })
     -- Use cmdline & path source for ':'.
     cmp.setup.cmdline(':', {
         completion = { autocomplete = false },

@@ -51,6 +51,7 @@ return require('packer').startup(function(use)
     -- For ultisnips users.
     use {
         'SirVer/ultisnips',
+        -- requires = {{'honza/vim-snippets', rtp = '.'}},
         config = function()
             vim.g.UltiSnipsExpandTrigger = '<Plug>(ultisnips_expand)'
             vim.g.UltiSnipsJumpForwardTrigger = '<Plug>(ultisnips_jump_forward)'
