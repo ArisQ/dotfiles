@@ -63,6 +63,7 @@ return require('packer').startup(function(use)
     use 'quangnguyen30192/cmp-nvim-ultisnips'
     use { 'hrsh7th/nvim-cmp', config = require 'plugins-config.cmp'}
     -- use { 'hrsh7th/nvim-cmp'}
+    use { 'jose-elias-alvarez/null-ls.nvim', config = require 'plugins-config.null-ls' }
 
     -- debug
     use 'mfussenegger/nvim-dap'
@@ -73,7 +74,6 @@ return require('packer').startup(function(use)
         requires = { {'nvim-lua/plenary.nvim'} }
     }
 
-
     use {
         'ahmedkhalf/project.nvim',
         config = function()
@@ -81,12 +81,12 @@ return require('packer').startup(function(use)
         end
     }
 
-    -- use {
-    --     'lewis6991/gitsigns.nvim',
-    --     config = function()
-    --         require('gitsigns').setup()
-    --     end
-    -- }
+    use {
+        'lewis6991/gitsigns.nvim',
+        config = function()
+            require('gitsigns').setup()
+        end
+    }
 
     --[[
 
