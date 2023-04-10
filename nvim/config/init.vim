@@ -6,7 +6,7 @@
 " leader key / 快捷键
 " mapleader需要在插件前
 let mapleader = ";"
-" autocmd BufWritePost $MYVIMRC source $MYVIMRC
+autocmd BufWritePost $MYVIMRC source $MYVIMRC
 
 " 插件安装，为其他功能服务，使用 packer
 " https://github.com/wbthomason/packer.nvim
@@ -25,7 +25,7 @@ lua require 'init'
 " colorscheme solarized
 colorscheme molokai
 " colorscheme phd
-
+" highlight NvimTreeGitIgnored guifg=red gui=bold,underline
 
 " UI增强
 " Project/fold view
@@ -98,3 +98,8 @@ let g:go_highlight_extra_types = 1
 let g:go_highlight_build_constraints = 1
 let g:go_highlight_generate_tags = 1
 " autocmd BufNewFile,BufRead *.go setlocal noexpandtab tabstop=4 shiftwidth=4
+"
+
+" c/c++ commentary
+" TODO to lua
+autocmd FileType cpp setlocal commentstring=//\ %s

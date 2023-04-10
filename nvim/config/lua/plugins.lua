@@ -11,7 +11,9 @@ return require('packer').startup(function(use)
     use { 'vim-scripts/phd' }
     use { 'altercation/vim-colors-solarized' }
 
-    use { 'tpope/vim-commentary', event = 'VimEnter' }
+    use { 'tpope/vim-commentary', event = 'VimEnter', config = function()
+        -- autocmd FileType apache setlocal commentstring=#\ %s
+    end}
 
     -- :TSUpdate will cause Packer to fail upon the first installation.
     -- It will run correctly when updating.
@@ -76,9 +78,7 @@ return require('packer').startup(function(use)
 
     use {
         'ahmedkhalf/project.nvim',
-        config = function()
-            require('project_nvim').setup{}
-        end
+        config = require 'plugins-config.project',
     }
 
     use {
@@ -111,5 +111,7 @@ return require('packer').startup(function(use)
 
     -- language specific
     use { 'fatih/vim-go', run = ':GoInstallBinaries' }
+
+    use 'Civitasv/cmake-tools.nvim'
 end)
 

@@ -18,6 +18,11 @@ wk.register({
         ta = {'<cmd>GoTest<cr>', 'Test'},
         tf = {'<cmd>GoTestFunc<cr>', 'Test'},
     },
+    -- cmake
+    m = {
+        name = 'Make',
+        r = {'<cmd>CMakeRun<cr>', 'CMake Run'},
+    },
 }, { prefix = '<Leader>' })
 
 require 'plugins-config.mason'()

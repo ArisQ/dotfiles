@@ -16,10 +16,25 @@ definition/reference/implemention
 view doc
 
 ## Go
-- [ ] TODO 写函数自动，搜索package并自动导入
+- [ ] TODO 写函数自动，搜索package并自动导入  by lsp
 - [ ] 修改struct以后，引用字段地方报错
 - [ ] build/run 整个目录，而不是当前文件
 * text object `if/af`: `dif daf vif yif`
 * struct split/join by `gS gJ` (AndredRadev/splitjoin.vim)
 * snippets
+
+
+## 功能
+* ui
+    * file tree
+    * buf list/tab
+* completion
+
+## Lua Script
+
+https://neovim.io/doc/user/lua-guide.html
+
+- lua script under `runtimepath/plugin/` will be run automatically on startup.
+- lua script under `runtimepath/lua/` will be loaded on demand.
+
 
