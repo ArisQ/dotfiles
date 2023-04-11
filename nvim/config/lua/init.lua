@@ -15,6 +15,7 @@ wk.register({
         g = {telescope_builtin.live_grep, 'Live Grep'},
         b = {telescope_builtin.buffers, 'Buffers'},
         h = {telescope_builtin.help_tags, 'Help Tags'},
+        p = {'<cmd>Telescope projects<cr>', 'Projects'},
         -- t = {telescope_builtin.treesitter, 'Tree Sitter'},
     },
     p = {
