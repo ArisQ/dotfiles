@@ -15,5 +15,6 @@ return function()
             'package.json' ,
         },
     }
+    require('telescope').load_extension('projects')
 end
 
