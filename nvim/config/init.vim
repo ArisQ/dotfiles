@@ -25,6 +25,8 @@ lua require 'init'
 " colorscheme solarized
 colorscheme molokai
 " colorscheme phd
+" colorscheme desert
+" colorscheme evening
 " highlight NvimTreeGitIgnored guifg=red gui=bold,underline
 
 " UI增强

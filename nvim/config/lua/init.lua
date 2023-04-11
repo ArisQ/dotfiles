@@ -41,8 +41,8 @@ wk.register({
 require 'plugins-config.mason'()
 
 vim.filetype.add({
-  extension = {
-    lox = 'lox',
-  },
+    extension = {
+        lox = 'lox',
+    },
 })
 
