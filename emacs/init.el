@@ -1,6 +1,6 @@
 
 
-; C-x C-e to execute sexp
+;; C-x C-e to execute sexp
 
 (setq inhibit-startup-message t)
 
@@ -121,7 +121,8 @@
   :init (ivy-rich-mode 1))
 
 (use-package counsel
-  :bind (("M-x" . counsel-M-x)
+  ; :bind (("M-x" . counsel-M-x)
+  :bind (
 	 ("C-x b" . counsel-ibuffer)
 	 ("C-x C-f" . counsel-find-file)
 	 :map minibuffer-local-map
@@ -138,10 +139,57 @@
   ([remap describe-variable] . counsel-describe-variable)
   ([remap describe-key] . helpful-key))
 
+(use-package general)
+(general-create-definer leader-key :prefix "C-c")
+
+
+;; (use-package evil
+;;   :init (evil-mode 0))
+;; (use-package evil-collection
+;;   :after evil
+;;   :config (evil-collection-init))
+
+(use-package hydra)
+(defhydra hydra-text-scale (:timeout 4)
+  "scale text"
+  ("j" text-scale-increase "in")
+  ("k" text-scale-decrease "out")
+  ("f" nil "finished" :exit t))
+(leader-key "ts" '(hydra-text-scale/body :which-key "scale test"))
+
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :custom ((projectile-completion-system 'ivy))
+  :bind-keymap ("C-c p" . projectile-command-map)
+  :init
+  (when (file-directory-p "~/Projects")
+	(setq projectile-project-search-path '("~/Projects")))
+  (setq projectile-switch-project-action #'projectile-dired))
+(use-package counsel-projectile
+  :config (counsel-projectile-mode))
+
+(use-package magit
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+;; (use-package evil-magit
+;;  :after magit)
+
+;; https://magit.vc/manual/ghub/Getting-Started.html
+;; https://magit.vc/manual/forge
+(use-package forge)
+
+
 
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
 ;; Replace "sbcl" with the path to your implementation
 (setq inferior-lisp-program "sbcl")
+
+;; org mode (Refer: org mode guide)
+(global-set-key (kbd "C-c l") #'org-store-link)
+(global-set-key (kbd "C-c a") #'org-agenda)
+(global-set-key (kbd "C-c c") #'org-capture)
+
 
 
 
@@ -154,7 +202,7 @@
    '("8d8207a39e18e2cc95ebddf62f841442d36fcba01a2a9451773d4ed30b632443" default))
  '(global-display-line-numbers-mode t)
  '(package-selected-packages
-   '(all-the-icons doom-themes helpful counsel ivy-rich which-key rainbow-delimiters doom-modeline ivy command-log-mode use-package))
+   '(forge magit counsel-projectile projectile general hydra evil-collection evil all-the-icons doom-themes helpful counsel ivy-rich which-key rainbow-delimiters doom-modeline ivy command-log-mode use-package))
  '(tool-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
