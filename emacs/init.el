@@ -177,7 +177,10 @@
 
 ;; https://magit.vc/manual/ghub/Getting-Started.html
 ;; https://magit.vc/manual/forge
-(use-package forge)
+(use-package forge
+  :after magit
+  :config
+  (add-to-list 'forge-alist '("git.bilibili.co" "git.bilibili.co/api/v4" "git.bilibili.co" forge-gitlab-repository)))
 
 
 
