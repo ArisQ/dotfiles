@@ -211,11 +211,22 @@
   (setq org-log-into-drawer t)
 
   (setq org-todo-keywords
-       '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
+	'((sequence "TODO(t)" "DOING(i)" "|" "DONE(d!)")
 	 (sequence "BACKLOG(b)" "PLAN(p)" "READY(r)" "ACTIVE(a)" "REVIEW(v)" "WAIT(w@/!)" "HOLD(h)" "|" "COMPLETED(c)" "CANC(k@)")))
-  ;; https://github.com/daviwil/emacs-from-scratch/blob/5e1f99448e32852277e2d274ce2057d55b8c7aaf/init.el#L300
 
-  (setq org-agenda-files '("~/Nextcloud/OrgMode/wiki/editors/emacs/emacs-from-scratch.org")))
+  ;; TODO
+  ;; Custom agenda view
+  ;; https://github.com/daviwil/emacs-from-scratch/blob/5e1f99448e32852277e2d274ce2057d55b8c7aaf/init.el#L300
+  ;; Capture templates
+  (setq org-capture-templates
+	`(("t" "Tasks / Projects")
+	  ("tt" "Task" entry (file+olp "~/Nextcloud/OrgMode/Tasks.org" "Inbox")
+	   "* TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)))
+
+  ;; (setq org-agenda-files '("~/Nextcloud/OrgMode/wiki/editors/emacs/emacs-from-scratch.org"))
+  ;; (setq org-agenda-files '("~/Nextcloud/OrgMode/"))
+  (setq org-agenda-files (directory-files-recursively "~/Nextcloud/OrgMode/" "\\.org$"))
+  (setq org-directory "~/Nextcloud/OrgMode/"))
 
 (use-package org-bullets
   :hook (org-mode . org-bullets-mode)
@@ -255,6 +266,19 @@
   :defer t
   :hook (org-mode . aq/org-mode-visual-fill))
 
+(setq org-babel-python-command "python3")
+(with-eval-after-load 'org
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (python . t)))
+  (setq org-confirm-babel-evaluate nil))
+
+(with-eval-after-load 'org
+  (require 'org-tempo)
+  (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("py" . "src python")))
 
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
 ;; Replace "sbcl" with the path to your implementation
