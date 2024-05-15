@@ -46,6 +46,8 @@
 ;; vim style C-g
 ;; (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
+(setq-default tab-width 4)
+
 
 ; MELPA community packages
 
@@ -187,6 +189,7 @@
 
 ;; https://magit.vc/manual/ghub/Getting-Started.html
 ;; https://magit.vc/manual/forge
+;; TODO: clone github/gitlab repository
 (use-package forge
   :after magit
   :config
@@ -196,12 +199,12 @@
   (org-indent-mode)
   (variable-pitch-mode 1)
   (visual-line-mode 1))
-;;  (setq evil-auto-indent nil))
-;;  (auto-fill-mode 0)
+  ;;  (setq evil-auto-indent nil))
+  ;;  (auto-fill-mode 0)
 
 
 (use-package org
-;;  :hook (org-mode . aq/org-mode-setup)
+  :hook (org-mode . aq/org-mode-setup)
   :config
   (setq org-ellipsis " ▾")
   (setq	org-hide-emphasis-markers t)
@@ -211,7 +214,7 @@
   (setq org-log-into-drawer t)
 
   (setq org-todo-keywords
-	'((sequence "TODO(t)" "DOING(i)" "|" "DONE(d!)")
+	'((sequence "TODO(t)" "DOING(i)" "PENDING(p)" "|" "DONE(d!)" "REJECTED(r)")
 	 (sequence "BACKLOG(b)" "PLAN(p)" "READY(r)" "ACTIVE(a)" "REVIEW(v)" "WAIT(w@/!)" "HOLD(h)" "|" "COMPLETED(c)" "CANC(k@)")))
 
   ;; TODO
@@ -226,36 +229,39 @@
   ;; (setq org-agenda-files '("~/Nextcloud/OrgMode/wiki/editors/emacs/emacs-from-scratch.org"))
   ;; (setq org-agenda-files '("~/Nextcloud/OrgMode/"))
   (setq org-agenda-files (directory-files-recursively "~/Nextcloud/OrgMode/" "\\.org$"))
-  (setq org-directory "~/Nextcloud/OrgMode/"))
+  (setq org-directory "~/Nextcloud/OrgMode/")
+
+  ;; org mode heading font size
+  (dolist (face '((org-level-1 . 1.2)
+				  (org-level-2 . 1.1)
+				  (org-level-3 . 1.05)
+				  (org-level-4 . 1.0)
+				  (org-level-5 . 1.1)
+				  (org-level-6 . 1.1)
+				  (org-level-7 . 1.1)
+				  (org-level-8 . 1.1)))
+	;;  (message "%s" (cdr face)))
+	;;  (set-face-attribute (car face) nil :font "YaHei Consolas Hybrid" :weight 'regular :height (cdr face)))
+	(set-face-attribute (car face) nil :font "FiraCode Nerd Font" :weight 'regular :height (cdr face)))
+
+  ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+  (set-face-attribute 'org-block nil    :foreground nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-table nil    :inherit 'fixed-pitch)
+  (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
+  (set-face-attribute 'org-code nil     :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-table nil    :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-checkbox nil  :inherit 'fixed-pitch)
+  (set-face-attribute 'line-number nil :inherit 'fixed-pitch)
+  (set-face-attribute 'line-number-current-line nil :inherit 'fixed-pitch))
 
 (use-package org-bullets
   :hook (org-mode . org-bullets-mode)
   :custom
   (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
-;; org mode heading font size
-(dolist (face '((org-level-1 . 1.2)
-		(org-level-2 . 1.1)
-		(org-level-3 . 1.05)
-		(org-level-4 . 1.0)
-		(org-level-5 . 1.1)
-		(org-level-6 . 1.1)
-		(org-level-7 . 1.1)
-		(org-level-8 . 1.1)))
-  (set-face-attribute (car face) nil :font "FiraCode Nerd Font" :weight 'regular :height (cdr face)))
-
-;; Ensure that anything that should be fixed-pitch in Org files appears that way
-(set-face-attribute 'org-block nil    :foreground nil :inherit 'fixed-pitch)
-(set-face-attribute 'org-table nil    :inherit 'fixed-pitch)
-(set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
-(set-face-attribute 'org-code nil     :inherit '(shadow fixed-pitch))
-(set-face-attribute 'org-table nil    :inherit '(shadow fixed-pitch))
-(set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-(set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-(set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-(set-face-attribute 'org-checkbox nil  :inherit 'fixed-pitch)
-(set-face-attribute 'line-number nil :inherit 'fixed-pitch)
-(set-face-attribute 'line-number-current-line nil :inherit 'fixed-pitch)
 
 ;; org mode 居中显示
 (defun aq/org-mode-visual-fill ()
@@ -279,6 +285,88 @@
   (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
   (add-to-list 'org-structure-template-alist '("py" . "src python")))
+
+
+(defun aq/lsp-mode-setup ()
+  (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+  (lsp-headerline-breadcrumb-mode)
+  (lsp-enable-which-key-integration))
+
+(use-package lsp-mode
+  :commands (lsp lsp-deferred)
+  :init
+  (setq lsp-keymap-prefix "C-c l")
+  :hook ((go-mode . lsp-deferred)
+	 (yaml-mode . lsp-deferred)
+	 ;; (lsp-mode . aq/lsp-mode-setup)
+	 (lsp-mode . lsp-enable-which-key-integration)))
+;;  :config (lsp-enable-which-key-integration t))
+
+(use-package lsp-ui
+  :commands (lsp-ui-mode))
+;;  :hook (lsp-mode . lsp-ui-mode)
+;;  :custom
+;;  (lsp-ui-doc-position 'bottom))
+(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+(use-package dap-mode)
+;; (use-package dap-dlv-go)
+(use-package flycheck
+  :ensure t
+  :config
+  (add-hook 'after-init-hook #'global-flycheck-mode))
+
+(use-package company
+  :after lsp-mode
+  :hook (lsp-mode . company-mode)
+  :bind (:map company-active-map
+         ("<tab>" . company-complete-selection))
+        (:map lsp-mode-map
+         ("<tab>" . company-indent-or-complete-common))
+  :custom
+  (company-minimum-prefix-length 1)
+  (company-idle-delay 0.0))
+(use-package company-box
+  :hook (company-mode . company-box-mode))
+
+(use-package treemacs)
+(use-package treemacs-projectile :after (treemacs projectile))
+(use-package treemacs-icons-dired :hook (dired-mode . treemacs-icons-dired-enable-once))
+(use-package treemacs-magit :after (treemacs magit))
+
+;; (use-package neotree)
+;; (global-set-key (kbd "C-c f e") 'neotree-toggle)
+
+(use-package yasnippet
+  :config (yas-global-mode 1))
+(use-package yasnippet-snippets
+  :after yasnippet)
+
+
+(use-package exec-path-from-shell)
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+
+
+(use-package go-mode)
+(add-hook 'go-mode-hook 'lsp-deferred)
+;; Set up before-save hooks to format buffer and add/delete imports.
+;; Make sure you don't have other gofmt/goimports hooks enabled.
+(defun lsp-go-install-save-hooks ()
+ (add-hook 'before-save-hook #'lsp-format-buffer t t)
+ (add-hook 'before-save-hook #'lsp-organize-imports t t))
+(add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
+
+(defun aq/buf-generate ()
+  "run buf generate for proto"
+  (interactive)
+  (shell-command "buf generate"))
+(use-package protobuf-mode
+  :bind (("C-c b" . 'aq/buf-generate)))
+;;(global-set-key (kbd "C-c b") 'aq/buf-generate)
+
+(use-package yaml-mode)
+
 
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
 ;; Replace "sbcl" with the path to your implementation
