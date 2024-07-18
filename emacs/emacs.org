@@ -1,3 +1,9 @@
+#+TITLE Emacs配置
+#+PROPERTY: header-args:emacs-lisp :tangle init.el
+
+* 基础设置
+** UI
+#+begin_src emacs-lisp
 (setq inhibit-startup-message t)
 
 (scroll-bar-mode -1)
@@ -33,7 +39,10 @@
                 shell-mode-hook
                 eshel-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
+#+end_src
 
+** 字体
+#+begin_src emacs-lisp
 ;; (set-face-attribute 'default nil :font "Fira Code Retina" :height 280)
 ;; (set-face-attribute 'default nil :font "WenQuanYi Zen Hei Mono" :height 160)
 (set-face-attribute 'default nil :font "FiraCode Nerd Font" :height 150)
@@ -46,6 +55,10 @@
 (set-face-attribute 'fixed-pitch nil :font "FiraCode Nerd Font" :height 150)
 (set-face-attribute 'variable-pitch nil :font "YaHei Consolas Hybrid" :height 150 :weight 'regular)
 
+#+end_src
+
+* 包管理
+#+begin_src emacs-lisp
 ; MELPA community packages
 ;; Initialize package sources
 (require 'package)
@@ -65,11 +78,18 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
+#+end_src
+
+** Command log
+#+begin_src emacs-lisp
 ;; display command line history
 ;; M-x global-command-log-mode
 ;; M-x clm/toggle-command-log-buffer
 (use-package command-log-mode)
+#+end_src
 
+* UI增强
+#+begin_src emacs-lisp
 ;; 首次安装需要运行 M-x all-the-icons-install-fonts
 (use-package all-the-icons)
 
@@ -82,7 +102,10 @@
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
-
+#+end_src
+* 功能增强
+** 命令补全（Ivy-Counsel-Swiper）
+#+begin_src emacs-lisp
 ;; ivy buffer completion
 (use-package ivy
   :diminish
@@ -116,7 +139,9 @@
   :config (setq ivy-initial-inputs-alist nil))
 
 ;; this is a test
-
+#+end_src
+** Which Key
+#+begin_src emacs-lisp
 (use-package which-key
   ;; :init (which-key-mode)
   ;; :defer 0
@@ -124,7 +149,10 @@
   :config
   (which-key-mode)
   (setq which-key-idle-delay 1))
+#+end_src
 
+** Helpful
+#+begin_src emacs-lisp
 (use-package helpful
   :custom
   (counsel-describe-function-function #'helpful-callable)
@@ -134,10 +162,17 @@
   ([remap describe-command] . helpful-command)
   ([remap describe-variable] . counsel-describe-variable)
   ([remap describe-key] . helpful-key))
-
+#+end_src
+** General
+#+begin_src emacs-lisp
 (use-package general)
 (general-create-definer leader-key :prefix "C-c")
+#+end_src
+** Hydra
 
+leader-key是general定义的leader-key
+
+#+begin_src emacs-lisp
 (use-package hydra)
 (defhydra hydra-text-scale (:timeout 4)
   "scale text"
@@ -154,10 +189,15 @@
   ("o" dap-step-out "step out")
   ("q" nil "quit" :exit t))
 (leader-key "dd" '(hydra-dap-debug/body :which-key "dap debug"))
+#+end_src
 
+** Ace Jump Mode
+#+begin_src emacs-lisp
 (use-package ace-jump-mode
   :bind ("C-." . ace-jump-mode))
-
+#+end_src
+** Evil
+#+begin_src emacs-lisp
 ;; (use-package evil-leader
 ;;   :config
 ;;     (global-evil-leader-mode) ; enable global-evil-leader-mode before evil-mode
@@ -232,13 +272,23 @@
 
 ;; vim style C-g
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+#+end_src
 
+* 系统设置
+同步系统PATH设置
+#+begin_src emacs-lisp
 (use-package exec-path-from-shell)
 (when (memq window-system '(mac ns x))
   (exec-path-from-shell-initialize))
+#+end_src
 
+** MacOS
+#+begin_src emacs-lisp
 (setq mac-command-modifier 'meta)
+#+end_src
 
+* OrgMode
+#+begin_src emacs-lisp
 (defun aq/org-mode-setup ()
     (org-indent-mode)
     (variable-pitch-mode 1)
@@ -335,9 +385,14 @@
 (global-set-key (kbd "C-c l") #'org-store-link)
 (global-set-key (kbd "C-c a") #'org-agenda)
 (global-set-key (kbd "C-c c") #'org-capture)
+#+end_src
 
+** Babel
+#+begin_src emacs-lisp
 
-
+#+end_src
+** 自动生成init.el
+#+begin_src emacs-lisp
 (defun aq/org-babel-tangle-config ()
   (when (string-equal (file-name-directory (buffer-file-name))
                       (expand-file-name user-emacs-directory))
@@ -346,7 +401,18 @@
       (org-babel-tangle))))
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'aq/org-babel-tangle-config)))
+#+end_src
 
+* 程序开发
+
+需求
+- 语法高亮
+- 自动补全
+- debug运行
+- snippets
+  
+** Project
+#+begin_src emacs-lisp
 (use-package projectile
   :diminish projectile-mode
   :config (projectile-mode)
@@ -368,7 +434,9 @@
 ;;  (setq projectile-switch-project-action 'neotree-projectile-action))
 (use-package counsel-projectile
   :config (counsel-projectile-mode))
-
+#+end_src
+** Magit
+#+begin_src emacs-lisp
 (use-package magit
   :custom
   (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
@@ -391,12 +459,17 @@
   :hook
   (magit-pre-refresh . diff-hl-magit-pre-refresh)
   (magit-post-refresh . diff-hl-magit-post-refresh))
+#+end_src
 
+** Snippets
+#+begin_src emacs-lisp
 (use-package yasnippet
   :config (yas-global-mode 1))
 (use-package yasnippet-snippets
   :after yasnippet)
-
+#+end_src
+** 自动补全
+#+begin_src emacs-lisp
 (use-package company
   :after lsp-mode
   :hook (lsp-mode . company-mode)
@@ -409,7 +482,9 @@
   (company-idle-delay 0.0))
 (use-package company-box
   :hook (company-mode . company-box-mode))
-
+#+end_src
+** Treemacs
+#+begin_src emacs-lisp
 (use-package treemacs
   :defer t
   :config (treemacs-follow-mode t))
@@ -420,7 +495,10 @@
 
 ;; (use-package neotree)
 ;; (global-set-key (kbd "C-c f e") 'neotree-toggle)
+#+end_src
 
+** Lsp
+#+begin_src emacs-lisp
 (defun aq/lsp-mode-setup ()
   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
   (lsp-headerline-breadcrumb-mode)
@@ -452,14 +530,49 @@
   :ensure t
   :config
   (add-hook 'after-init-hook #'global-flycheck-mode))
+#+end_src
+** C++
+首次安装时运行 ~dap-cpptools-setup~
 
+#+begin_src emacs-lisp
 (setq-default c-basic-offset 4)
 
 (require 'dap-cpptools)
 
 ;; (use-package clang-format) ;; replaced by lsp/clangd
 (use-package cmake-mode)
+#+end_src
 
+*** 项目配置
+1. ~projectile-configure-project~ 运行 ~cmake -S . -B build~
+2. ~projectile-run-project~ 可以运行应用 ~./build/myapp~
+3. 配置launch.json，示例
+    #+begin_src json
+    {
+        "version": "0.2.0",
+        "configurations": [
+            {
+                "name": "debug myapp",
+                "type": "cppdbg",
+                "request": "launch",
+                "program": "${workspaceFolder}/build/myapp",
+                "stopAtEntry": false,
+                "cwd": "${workspaceFolder}",
+                "environment": [],
+                "externalConsole": false,
+                "MIDebuggerPath": "/usr/bin/lldb",
+                "MIMode": "lldb"
+            }
+        ]
+    }
+    #+end_src
+4. ~<leader> d d~ 启动dap-debug
+
+** Python
+** Golang(TODO remove?)
+使用lsp-mode，去除go-mode?
+
+#+begin_src emacs-lisp
 (use-package go-mode)
 (add-hook 'go-mode-hook 'lsp-deferred)
 ;; Set up before-save hooks to format buffer and add/delete imports.
@@ -476,12 +589,27 @@
 (use-package protobuf-mode
   :bind (("C-c b" . 'aq/buf-generate)))
 ;;(global-set-key (kbd "C-c b") 'aq/buf-generate)
+#+end_src
 
+** Common Lisp
+
+run by =M-x slime=
+
+#+begin_src emacs-lisp
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
 ;; Replace "sbcl" with the path to your implementation
 (setq inferior-lisp-program "sbcl")
-
+#+end_src
+** YAML
+#+begin_src emacs-lisp
 (use-package yaml-mode)
+#+end_src
+
+** TODO 远程开发Tramp
+
+* 杂项
+
+#+begin_src emacs-lisp
 
 ;; C-x C-e to execute sexp
 ;; C-h f describe-function
@@ -489,3 +617,10 @@
 ;; move customize to seperate file
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
+#+end_src
+
+TODO
+- [ ] evil命令
+  - [ ] =<leader>= key设置
+- [ ] projectile懒加载
+- [X] use-package init/config区别: init是加载前，config是加载后
