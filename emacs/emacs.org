@@ -59,14 +59,14 @@
 
 * 包管理
 #+begin_src emacs-lisp
-; MELPA community packages
+;; MELPA community packages
 ;; Initialize package sources
 (require 'package)
 
 ;;			 ("melpa-stable" . "https://stable.melpa.org/packages/")
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-			 ("org" . "https://orgmode.org/elpa/")
-			 ("elpa" . "https://elpa.gnu.org/packages/")))
+                         ("org" . "https://orgmode.org/elpa/")
+                         ("elpa" . "https://elpa.gnu.org/packages/")))
 (package-initialize)
 (unless package-archive-contents
   (package-refresh-contents))
@@ -605,7 +605,9 @@ run by =M-x slime=
 (use-package yaml-mode)
 #+end_src
 
-** TODO 远程开发Tramp
+** TODO 其他配置
+- Flycheck
+- 远程开发Tramp
 
 * 杂项
 

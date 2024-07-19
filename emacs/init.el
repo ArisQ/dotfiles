@@ -46,14 +46,14 @@
 (set-face-attribute 'fixed-pitch nil :font "FiraCode Nerd Font" :height 150)
 (set-face-attribute 'variable-pitch nil :font "YaHei Consolas Hybrid" :height 150 :weight 'regular)
 
-; MELPA community packages
+;; MELPA community packages
 ;; Initialize package sources
 (require 'package)
 
 ;;			 ("melpa-stable" . "https://stable.melpa.org/packages/")
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-			 ("org" . "https://orgmode.org/elpa/")
-			 ("elpa" . "https://elpa.gnu.org/packages/")))
+                         ("org" . "https://orgmode.org/elpa/")
+                         ("elpa" . "https://elpa.gnu.org/packages/")))
 (package-initialize)
 (unless package-archive-contents
   (package-refresh-contents))
