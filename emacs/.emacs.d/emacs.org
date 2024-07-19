@@ -394,8 +394,12 @@ leader-key是general定义的leader-key
 ** 自动生成init.el
 #+begin_src emacs-lisp
 (defun aq/org-babel-tangle-config ()
-  (when (string-equal (file-name-directory (buffer-file-name))
-                      (expand-file-name user-emacs-directory))
+  ;;  (when (string-equal (file-name-directory buffer-file-name)
+  ;;                      (expand-file-name user-emacs-directory))
+  (when (string-equal (file-name-nondirectory
+                       (directory-file-name
+                        (file-name-directory buffer-file-name)))
+                      ".emacs.d")
     ;; Dynamic scoping to the rescue
     (let ((org-confirm-babel-evaluate nil))
       (org-babel-tangle))))
@@ -524,8 +528,6 @@ leader-key是general定义的leader-key
 (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
 (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 (use-package dap-mode)
-;; (use-package dap-dlv-go)
-(require 'dap-dlv-go)
 (use-package flycheck
   :ensure t
   :config
@@ -591,6 +593,10 @@ leader-key是general定义的leader-key
 ;;(global-set-key (kbd "C-c b") 'aq/buf-generate)
 #+end_src
 
+#+begin_src emacs-lisp
+;; (use-package dap-dlv-go)
+(require 'dap-dlv-go)
+#+end_src
 ** Common Lisp
 
 run by =M-x slime=
@@ -622,7 +628,7 @@ run by =M-x slime=
 #+end_src
 
 TODO
-- [ ] evil命令
-  - [ ] =<leader>= key设置
+- [X] evil命令
+  - [X] =<leader>= key设置
 - [ ] projectile懒加载
 - [X] use-package init/config区别: init是加载前，config是加载后
