@@ -72,7 +72,7 @@ Plug 'vim-syntastic/syntastic'
 Plug 'sjl/gundo.vim'
 
 Plug 'chr4/nginx.vim'
-Plug 'suan/vim-instant-markdown', {'for': 'markdown'}
+" Plug 'suan/vim-instant-markdown', {'for': 'markdown'}
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 " go split/join struct
 " Plug 'AndrewRadev/splitjoin.vim'

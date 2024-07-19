@@ -1,0 +1,9 @@
+* dotfiles 个人配置
+
+使用[[https://www.gnu.org/software/stow/][stow]]安装，如安装emacs配置
+
+#+begin_src shell
+stow emacs
+#+end_src
+
+[[https://brandon.invergo.net/news/2012-05-26-using-gnu-stow-to-manage-your-dotfiles.html][参考]]

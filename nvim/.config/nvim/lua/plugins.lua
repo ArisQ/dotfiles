@@ -11,19 +11,23 @@ return require('packer').startup(function(use)
     use { 'vim-scripts/phd' }
     use { 'altercation/vim-colors-solarized' }
     -- use { 'nathanaelkane/vim-indent-guides' }
-    use { 'lukas-reineke/indent-blankline.nvim', config = function()
-        require('indent_blankline').setup{
-            -- space_char_blankline = ' ',
-            -- show_current_context = true,
-            -- show_current_context_start = true,
-            -- use_treesitter = true,
-            show_first_indent_level = false,
-        }
-    end}
+    use { 'lukas-reineke/indent-blankline.nvim' }
+    -- use { 'lukas-reineke/indent-blankline.nvim', config = function()
+    --     -- require('indent_blankline').setup{
+    --     require('ibl').setup{
+    --         -- space_char_blankline = ' ',
+    --         -- show_current_context = true,
+    --         -- show_current_context_start = true,
+    --         -- use_treesitter = true,
+    --         show_first_indent_level = false,
+    --     }
+    -- end}
 
     use { 'tpope/vim-commentary', event = 'VimEnter', config = function()
         -- autocmd FileType apache setlocal commentstring=#\ %s
     end}
+
+    use 'Lokaltog/vim-easymotion'
 
     -- :TSUpdate will cause Packer to fail upon the first installation.
     -- It will run correctly when updating.

@@ -8,6 +8,10 @@ TODOs & hints
 - [ ] 竖屏分屏切换横屏
 - [ ] 搜索project/cwd中文件的内容
 
+## Terminal
+
+- [ ] 禁止文件打开时 terminal窗口大小变动 `set winfixheight` `set noequalalways`
+
 ## Programing Language
 syntax
 completion/snippets

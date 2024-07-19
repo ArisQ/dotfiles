@@ -40,6 +40,8 @@ set cursorcolumn
 set sw=4
 set expandtab
 
+set noequalalways
+
 " 功能增强
 " easymotion
 " undo history/tree

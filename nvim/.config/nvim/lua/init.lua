@@ -39,11 +39,22 @@ wk.register({
     },
 }, { prefix = '<Leader>' })
 
-require 'plugins-config.mason'()
+-- already done in plugins.lua
+-- require 'plugins-config.mason'()
 
 vim.filetype.add({
     extension = {
         lox = 'lox',
     },
 })
+
+-- local lspconfig = require 'lspconfig'
+-- lspconfig.gopls.setup{
+--     -- on_attach = require 'completion'.on_attach,
+--     settings = {
+--         gopls =  {
+--             buildFlags =  {'-tags=wireinject'}
+--         }
+--     }
+-- }
 
