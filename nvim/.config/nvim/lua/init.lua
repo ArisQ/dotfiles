@@ -3,6 +3,7 @@ require 'plugins'
 local telescope_builtin = require 'telescope.builtin'
 local wk = require 'which-key'
 wk.register({
+    q = {'<cmd>q<cr>', 'Quit'},
     e = {'<cmd>NvimTreeToggle<cr>', 'File Explorer'},
     -- fl = {'<cmd>NvimTreeToggle<cr>', 'File Explorer'},
     f = {
@@ -36,6 +37,12 @@ wk.register({
     m = {
         name = 'Make',
         r = {'<cmd>CMakeRun<cr>', 'CMake Run'},
+    },
+    -- rust
+    r = {
+        name = 'Rust',
+        -- t = {'<cmd>!cargo run<cr>', 'Run'},
+        r = {'<cmd>w<cr><cmd>terminal cargo run<cr>i', 'Run with terminal'},
     },
 }, { prefix = '<Leader>' })
 

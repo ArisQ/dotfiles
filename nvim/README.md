@@ -42,3 +42,12 @@ https://neovim.io/doc/user/lua-guide.html
 - lua script under `runtimepath/lua/` will be loaded on demand.
 
 
+## needs from golang
+
+1. QUICK FIX
+2. :cnext :previous 快捷键
+3. 光标在.vimrc的某行时，如何快速打开帮助，比如在autowrite上 `set autowrite`,
+而不用输入:h autowrite
+4. 自动转换标点符号，=> , (其他，中英混排时，如何确定标点)
+
+

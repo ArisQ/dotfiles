@@ -90,9 +90,12 @@
 
 * UI增强
 #+begin_src emacs-lisp
-;; 首次安装需要运行 M-x all-the-icons-install-fonts
+;; 首次安装需要运行
+;; M-x all-the-icons-install-fonts
 (use-package all-the-icons)
 
+;; 首次安装需要运行
+;; M-x nerd-icons-install-fonts
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1)
