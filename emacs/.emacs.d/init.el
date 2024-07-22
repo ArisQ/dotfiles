@@ -188,9 +188,11 @@
 ;;  :after (evil-leader)
   :config
     (evil-mode 1)
+    ;; (evil-set-leader '(normal motion) ";")
     (evil-set-leader 'normal ";")
     (aq/set-evil-key "e" 'treemacs) ; 太浪费，不常用，但占用了短快捷键
     (aq/set-evil-key "q" 'quit-window)
+    (aq/set-evil-key "x" 'delete-window)
     (aq/set-evil-key "k" 'kill-buffer)
     (aq/set-evil-key "b" 'counsel-ibuffer)
     (aq/set-evil-key "dd" 'dap-debug-last)
@@ -339,8 +341,12 @@
 
 
 (defun aq/org-babel-tangle-config ()
-  (when (string-equal (file-name-directory (buffer-file-name))
-                      (expand-file-name user-emacs-directory))
+  ;;  (when (string-equal (file-name-directory buffer-file-name)
+  ;;                      (expand-file-name user-emacs-directory))
+  (when (string-equal (file-name-nondirectory
+                       (directory-file-name
+                        (file-name-directory buffer-file-name)))
+                      ".emacs.d")
     ;; Dynamic scoping to the rescue
     (let ((org-confirm-babel-evaluate nil))
       (org-babel-tangle))))
@@ -434,6 +440,8 @@
          (yaml-mode . lsp-deferred)
          (c-mode . lsp-deferred)
          (c++-mode . lsp-deferred)
+         (java-mode . lsp-deferred)
+         (dart-mode . lsp-deferred)
          (lsp-mode . aq/lsp-mode-setup)))
 		 ;; (lsp-mode . lsp-enable-which-key-integration)))
 ;;  :config (lsp-enable-which-key-integration t))
@@ -446,8 +454,6 @@
 (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
 (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 (use-package dap-mode)
-;; (use-package dap-dlv-go)
-(require 'dap-dlv-go)
 (use-package flycheck
   :ensure t
   :config
@@ -477,9 +483,23 @@
   :bind (("C-c b" . 'aq/buf-generate)))
 ;;(global-set-key (kbd "C-c b") 'aq/buf-generate)
 
+;; (use-package dap-dlv-go)
+(require 'dap-dlv-go)
+
+(use-package dart-mode)
+(use-package lsp-dart
+  :config
+  (setq gc-cons-threshold (* 100 1024 1024)
+        read-process-output-max (* 1024 1024)))
+
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
 ;; Replace "sbcl" with the path to your implementation
 (setq inferior-lisp-program "sbcl")
+
+;; (require 'lsp-java)
+;; (add-hook 'java-mode-hook #'lsp)
+(use-package lsp-java
+  :hook (java-mode . lsp))
 
 (use-package yaml-mode)
 
