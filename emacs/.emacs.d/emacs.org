@@ -222,33 +222,49 @@ leader-key是general定义的leader-key
 ;;        "jw" 'ace-jump-word-mode
 ;;        ";" 'evil-repeat-find-char))
 (defun aq/set-evil-key (s f)
-    (evil-define-key 'normal 'global (kbd (concat "<leader>" s)) f))
+  (evil-define-key 'normal 'global (kbd (concat "<leader>" s)) f))
+
+;; origami toggle使用origami-forward-toggle-node
+(defun aq/evil-fold-origami-forward (mode-actions)
+  (if (eq (caar mode-actions) 'origami-mode)
+      (cons
+       (car mode-actions)
+       (plist-put (cdr mode-actions)
+                  :toggle (lambda () (origami-forward-toggle-node (current-buffer) (point)))))
+    mode-actions))
+
+(use-package undo-tree
+  :config (global-undo-tree-mode))
 
 (use-package evil
-;;  :after (evil-leader)
+  :init
+  (setq evil-undo-system 'undo-tree)
+  ;;  :after (evil-leader)
   :config
-    (evil-mode 1)
-    ;; (evil-set-leader '(normal motion) ";")
-    (evil-set-leader 'normal ";")
-    (aq/set-evil-key "e" 'treemacs) ; 太浪费，不常用，但占用了短快捷键
-    (aq/set-evil-key "q" 'quit-window)
-    (aq/set-evil-key "x" 'delete-window)
-    (aq/set-evil-key "k" 'kill-buffer)
-    (aq/set-evil-key "b" 'counsel-ibuffer)
-    (aq/set-evil-key "dd" 'dap-debug-last)
-    (aq/set-evil-key "dr" 'dap-debug-restart)
-    (aq/set-evil-key "dq" 'dap-disconnect)
-    (aq/set-evil-key "db" 'dap-breakpoint-toggle)
-    (aq/set-evil-key "dc" 'dap-continue)
-    (aq/set-evil-key "dn" 'dap-next)
-    (aq/set-evil-key "di" 'dap-step-in)
-    (aq/set-evil-key "do" 'dap-step-out)
-    (aq/set-evil-key "SPC" 'ace-jump-word-mode)
-    (aq/set-evil-key "jb" 'ace-jump-mode-pop-mark)
-    (aq/set-evil-key "jc" 'ace-jump-char-mode)
-    (aq/set-evil-key "jl" 'ace-jump-line-mode)
-    (aq/set-evil-key "jw" 'ace-jump-word-mode)
-    (aq/set-evil-key ";" 'evil-repeat-find-char))
+  (setq evil-fold-list (mapcar #'aq/evil-fold-origami-forward evil-fold-list))
+  (evil-mode 1)
+  ;; (evil-set-leader '(normal motion) ";")
+  (evil-set-leader 'normal ";")
+  (aq/set-evil-key "e" 'treemacs) ; 太浪费，不常用，但占用了短快捷键
+  (aq/set-evil-key "q" 'quit-window)
+  (aq/set-evil-key "x" 'delete-window)
+  (aq/set-evil-key "k" 'kill-buffer)
+  (aq/set-evil-key "b" 'counsel-ibuffer)
+  (aq/set-evil-key "s" 'save-buffer)
+  (aq/set-evil-key "dd" 'dap-debug-last)
+  (aq/set-evil-key "dr" 'dap-debug-restart)
+  (aq/set-evil-key "dq" 'dap-disconnect)
+  (aq/set-evil-key "db" 'dap-breakpoint-toggle)
+  (aq/set-evil-key "dc" 'dap-continue)
+  (aq/set-evil-key "dn" 'dap-next)
+  (aq/set-evil-key "di" 'dap-step-in)
+  (aq/set-evil-key "do" 'dap-step-out)
+  (aq/set-evil-key "SPC" 'ace-jump-word-mode)
+  (aq/set-evil-key "jb" 'ace-jump-mode-pop-mark)
+  (aq/set-evil-key "jc" 'ace-jump-char-mode)
+  (aq/set-evil-key "jl" 'ace-jump-line-mode)
+  (aq/set-evil-key "jw" 'ace-jump-word-mode)
+  (aq/set-evil-key ";" 'evil-repeat-find-char))
 ;;    (evil-define-key 'normal 'global (kbd "<leader>e") 'treemacs)
 ;;    (evil-define-key 'normal 'global (kbd "<leader>q") 'quit-window)
 ;;    (evil-define-key 'normal 'global (kbd "<leader>k") 'kill-buffer)
@@ -274,6 +290,11 @@ leader-key是general定义的leader-key
 
 ;; vim style C-g
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
+;; use ~gcc~ to toggle comment
+(use-package evil-commentary
+  :after evil
+  :config (evil-commentary-mode))
 #+end_src
 
 * 系统设置
@@ -522,7 +543,7 @@ leader-key是general定义的leader-key
          (java-mode . lsp-deferred)
          (dart-mode . lsp-deferred)
          (lsp-mode . aq/lsp-mode-setup)))
-		 ;; (lsp-mode . lsp-enable-which-key-integration)))
+;; (lsp-mode . lsp-enable-which-key-integration)))
 ;;  :config (lsp-enable-which-key-integration t))
 
 (use-package lsp-ui
@@ -532,11 +553,18 @@ leader-key是general定义的leader-key
 ;;  (lsp-ui-doc-position 'bottom))
 (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
 (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+
+;; (use-package origami)
+(use-package lsp-origami
+  :hook (lsp-after-open lsp-origami-try-enable))
+
 (use-package dap-mode)
 (use-package flycheck
   :ensure t
-  :config
-  (add-hook 'after-init-hook #'global-flycheck-mode))
+  :hook
+  (after-init #'global-flycheck-mode))
+;; :config
+;; (add-hook 'after-init-hook #'global-flycheck-mode))
 #+end_src
 ** C++
 首次安装时运行 ~dap-cpptools-setup~
