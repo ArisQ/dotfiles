@@ -37,6 +37,7 @@
 ;; (set-face-attribute 'default nil :font "Fira Code Retina" :height 280)
 ;; (set-face-attribute 'default nil :font "WenQuanYi Zen Hei Mono" :height 160)
 (set-face-attribute 'default nil :font "FiraCode Nerd Font" :height 150)
+;; (set-face-attribute 'default nil :font "YaHei Consolas Hybrid" :height 150)
 ;; (add-to-list 'default-frame-alist '(font . "Yahei Consolas Hybrid-12"))
 ;; (add-to-list 'default-frame-alist '(font . "WenQuanYi Zen Hei"))
 ;; (add-to-list 'default-frame-alist '(font . "WenQuanYi Zen Hei Mono-16"))
@@ -87,18 +88,18 @@
 (use-package ivy
   :diminish
   :bind (("C-s" . swiper)
-     :map ivy-minibuffer-map
-     ("TAB" . ivy-alt-done)
-     ("C-l" . ivy-alt-done)
-     ("C-j" . ivy-next-line)
-     ("C-k" . iv-previous-line)
-     :map ivy-switch-buffer-map
-     ("C-k" . ivy-previous-line)
-     ("C-l" . ivy-done)
-     ("C-d" . ivy-switch-buffer-kill)
-     :map ivy-reverse-i-search-map
-     ("C-k" . ivy-previous-line)
-     ("C-d" . ivy-reverse-i-search-kill))
+         :map ivy-minibuffer-map
+         ("TAB" . ivy-alt-done)
+         ("C-l" . ivy-alt-done)
+         ("C-j" . ivy-next-line)
+         ("C-k" . iv-previous-line)
+         :map ivy-switch-buffer-map
+         ("C-k" . ivy-previous-line)
+         ("C-l" . ivy-done)
+         ("C-d" . ivy-switch-buffer-kill)
+         :map ivy-reverse-i-search-map
+         ("C-k" . ivy-previous-line)
+         ("C-d" . ivy-reverse-i-search-kill))
   :config
   (ivy-mode 1))
 
@@ -106,14 +107,15 @@
   :init (ivy-rich-mode 1))
 
 (use-package counsel
-  ; :bind (("M-x" . counsel-M-x)
-  :bind (
-     ("M-x" . counsel-M-x)
-     ("C-x b" . counsel-ibuffer)
-     ("C-x C-f" . counsel-find-file)
-     :map minibuffer-local-map
-     ("C-r" . counsel-minibuffer-history))
-  :config (setq ivy-initial-inputs-alist nil))
+  ;; :bind (("M-x" . counsel-M-x)
+  :bind (("M-x" . counsel-M-x)
+         ("C-x b" . counsel-ibuffer)
+         ("C-x C-f" . counsel-find-file)
+         :map minibuffer-local-map
+         ("C-r" . counsel-minibuffer-history))
+  :config
+  (setq ivy-initial-inputs-alist nil)
+  (setq counsel-find-file-ignore-regexp "~$|\\.cache/"))
 
 ;; this is a test
 
@@ -224,25 +226,8 @@
   (aq/set-evil-key "jc" 'ace-jump-char-mode)
   (aq/set-evil-key "jl" 'ace-jump-line-mode)
   (aq/set-evil-key "jw" 'ace-jump-word-mode)
+  (aq/set-evil-key "pg" 'go-playground)
   (aq/set-evil-key ";" 'evil-repeat-find-char))
-;;    (evil-define-key 'normal 'global (kbd "<leader>e") 'treemacs)
-;;    (evil-define-key 'normal 'global (kbd "<leader>q") 'quit-window)
-;;    (evil-define-key 'normal 'global (kbd "<leader>k") 'kill-buffer)
-;;    (evil-define-key 'normal 'global (kbd "<leader>b") 'counsel-ibuffer)
-;;    (evil-define-key 'normal 'global (kbd "<leader>dd") 'dap-debug-last)
-;;    (evil-define-key 'normal 'global (kbd "<leader>dr") 'dap-debug-restart)
-;;    (evil-define-key 'normal 'global (kbd "<leader>dq") 'dap-disconnect)
-;;    (evil-define-key 'normal 'global (kbd "<leader>db") 'dap-breakpoint-toggle)
-;;    (evil-define-key 'normal 'global (kbd "<leader>dc") 'dap-continue)
-;;    (evil-define-key 'normal 'global (kbd "<leader>dn") 'dap-next)
-;;    (evil-define-key 'normal 'global (kbd "<leader>di") 'dap-step-in)
-;;    (evil-define-key 'normal 'global (kbd "<leader>do") 'dap-step-out)
-;;    (evil-define-key 'normal 'global (kbd "<leader>SPC") 'ace-jump-word-mode)
-;;    (evil-define-key 'normal 'global (kbd "<leader>jb") 'ace-jump-mode-pop-mark)
-;;    (evil-define-key 'normal 'global (kbd "<leader>jc") 'ace-jump-char-mode)
-;;    (evil-define-key 'normal 'global (kbd "<leader>jl") 'ace-jump-line-mode)
-;;    (evil-define-key 'normal 'global (kbd "<leader>jw") 'ace-jump-word-mode)
-;;    (evil-define-key 'normal 'global (kbd "<leader>;") 'evil-repeat-find-char))
 
 ;; (use-package evil-collection
 ;;   :after evil
@@ -303,10 +288,10 @@
 					(org-level-2 . 1.1)
 					(org-level-3 . 1.05)
 					(org-level-4 . 1.0)
-					(org-level-5 . 1.1)
-					(org-level-6 . 1.1)
-					(org-level-7 . 1.1)
-					(org-level-8 . 1.1)))
+					(org-level-5 . 1.0)
+					(org-level-6 . 1.0)
+					(org-level-7 . 1.0)
+					(org-level-8 . 1.0)))
 	;;  (message "%s" (cdr face)))
 	;;  (set-face-attribute (car face) nil :font "YaHei Consolas Hybrid" :weight 'regular :height (cdr face)))
 	(set-face-attribute (car face) nil :font "FiraCode Nerd Font" :weight 'regular :height (cdr face)))
@@ -457,14 +442,14 @@
   :commands (lsp lsp-deferred)
   :init
   (setq lsp-keymap-prefix "C-c l")
-  ;; :config
-  ;; (setq lsp-clients-clangd-executable "/usr/bin/clangd")
   :hook ((go-mode . lsp-deferred)
          (yaml-mode . lsp-deferred)
          (c-mode . lsp-deferred)
          (c++-mode . lsp-deferred)
+         (python-mode . lsp-deferred)
          (java-mode . lsp-deferred)
          (dart-mode . lsp-deferred)
+         (meson-mode . lsp-deferred)
          (lsp-mode . aq/lsp-mode-setup)))
 ;; (lsp-mode . lsp-enable-which-key-integration)))
 ;;  :config (lsp-enable-which-key-integration t))
@@ -494,10 +479,32 @@
 (require 'dap-cpptools)
 
 ;; (use-package clang-format) ;; replaced by lsp/clangd
-(use-package cmake-mode)
+;; (use-package cmake-mode)
+
+(use-package meson-mode)
+
+(use-package auto-virtualenvwrapper)
+;; :hook
+;;  (python-base-mode auto-virtualenvwrapper-activate)
+;;  (window-configuration-change auto-virtualenvwrapper-activate)
+;;  (focus-in auto-virtualenvwrapper-activate))
+
+(use-package pet
+  :after (auto-virtualenvwrapper)
+  :config
+  (add-hook 'python-base-mode-hook
+            (lambda ()
+              (auto-virtualenvwrapper-activate) ; activate before pet-mode
+              (pet-mode))
+            -10))
+;; (add-hook 'python-base-mode-hook 'pet-mode -10))
+;; :hook (python-base-mode . pet-mode)) ; depth -10
+
+(require 'dap-python)
+(setq dap-python-debugger 'debugpy)
 
 (use-package go-mode)
-(add-hook 'go-mode-hook 'lsp-deferred)
+;; (add-hook 'go-mode-hook 'lsp-deferred)
 ;; Set up before-save hooks to format buffer and add/delete imports.
 ;; Make sure you don't have other gofmt/goimports hooks enabled.
 (defun lsp-go-install-save-hooks ()
@@ -516,6 +523,8 @@
 ;; (use-package dap-dlv-go)
 (require 'dap-dlv-go)
 
+(use-package go-playground)
+
 (use-package dart-mode)
 (use-package lsp-dart
   :config
@@ -533,9 +542,18 @@
 
 (use-package yaml-mode)
 
+(use-package lorem-ipsum)
+
 ;; C-x C-e to execute sexp
 ;; C-h f describe-function
 
 ;; move customize to seperate file
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
+
+(add-to-list 'load-path
+             (concat user-emacs-directory "my-plugins")
+             t)
+(require 'my-plugin)
+;; (use-package my-plugin
+;;   :load-path (concat user-emacs-directory "my-plugins/my-plugin.el"))
