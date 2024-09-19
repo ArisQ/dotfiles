@@ -196,7 +196,9 @@
     mode-actions))
 
 (use-package undo-tree
-  :config (global-undo-tree-mode))
+  :config
+  (global-undo-tree-mode)
+  (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree"))))
 
 (use-package evil
   :init
@@ -541,6 +543,39 @@
   :hook (java-mode . lsp))
 
 (use-package yaml-mode)
+
+;; See https://github.com/emacs-eaf/emacs-application-framework/wiki/Customization
+;; (use-package eaf
+;;   :init ((setq eaf-python-command "~/.emacs.d/site-lisp/emacs-application-framework/venv/bin/python3"))
+;;   :load-path "~/.emacs.d/site-lisp/emacs-application-framework")
+;; :custom
+;; (eaf-browser-continue-where-left-off t)
+;; (eaf-browser-enable-adblocker t)
+;; (browse-url-browser-function 'eaf-open-browser)
+;; :config
+;; (defalias 'browse-web #'eaf-open-browser)
+;; (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
+;; (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
+;; (eaf-bind-key take_photo "p" eaf-camera-keybinding)
+;; (eaf-bind-key nil "M-q" eaf-browser-keybinding))
+;; unbind, see more in the Wiki
+
+;; (require 'eaf-demo)
+;; (require 'eaf-music-player)
+;; (require 'eaf-2048)
+;; (require 'eaf-terminal)
+;; (require 'eaf-image-viewer)
+;; (require 'eaf-pdf-viewer)
+;; (require 'eaf-browser)
+;; (require 'eaf-markdown-previewer)
+;; (require 'eaf-file-browser)
+;; (require 'eaf-mindmap)
+;; (require 'eaf-video-player)
+;; (require 'eaf-org-previewer)
+;; (require 'eaf-netease-cloud-music)
+;; (require 'eaf-system-monitor)
+;; (require 'eaf-pyqterminal)
+;; (require 'eaf-markmap)
 
 (use-package lorem-ipsum)
 
