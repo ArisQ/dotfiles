@@ -34,6 +34,9 @@
                 eshel-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
+;; 中文line break
+(setq word-wrap-by-category t)
+
 ;; (set-face-attribute 'default nil :font "Fira Code Retina" :height 280)
 ;; (set-face-attribute 'default nil :font "WenQuanYi Zen Hei Mono" :height 160)
 (set-face-attribute 'default nil :font "FiraCode Nerd Font" :height 150)
@@ -71,9 +74,12 @@
 ;; M-x clm/toggle-command-log-buffer
 (use-package command-log-mode)
 
-;; 首次安装需要运行 M-x all-the-icons-install-fonts
+;; 首次安装需要运行
+;; M-x all-the-icons-install-fonts
 (use-package all-the-icons)
 
+;; 首次安装需要运行
+;; M-x nerd-icons-install-fonts
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1)
@@ -203,6 +209,8 @@
 (use-package evil
   :init
   (setq evil-undo-system 'undo-tree)
+  ;; (setq evil-want-integration t) ;; default is true
+  (setq evil-want-keybinding nil)
   ;;  :after (evil-leader)
   :config
   (setq evil-fold-list (mapcar #'aq/evil-fold-origami-forward evil-fold-list))
@@ -242,6 +250,13 @@
 (use-package evil-commentary
   :after evil
   :config (evil-commentary-mode))
+
+(use-package evil-collection
+  :after evil
+  :config
+  (evil-collection-init))
+
+(use-package unicad)
 
 (use-package exec-path-from-shell)
 (when (memq window-system '(mac ns x))
@@ -345,6 +360,11 @@
 (global-set-key (kbd "C-c l") #'org-store-link)
 (global-set-key (kbd "C-c a") #'org-agenda)
 (global-set-key (kbd "C-c c") #'org-capture)
+
+;; 自动展开加粗斜体等marker
+(use-package org-appear
+  :after org
+	:hook (org-mode . org-appear-mode))
 
 
 

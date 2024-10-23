@@ -39,6 +39,9 @@
                 shell-mode-hook
                 eshel-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
+;; 中文line break
+(setq word-wrap-by-category t)
 #+end_src
 
 ** 字体
@@ -201,6 +204,7 @@ leader-key是general定义的leader-key
 (use-package ace-jump-mode
   :bind ("C-." . ace-jump-mode))
 #+end_src
+
 ** Evil
 #+begin_src emacs-lisp
 ;; (use-package evil-leader
@@ -246,6 +250,8 @@ leader-key是general定义的leader-key
 (use-package evil
   :init
   (setq evil-undo-system 'undo-tree)
+  ;; (setq evil-want-integration t) ;; default is true
+  (setq evil-want-keybinding nil)
   ;;  :after (evil-leader)
   :config
   (setq evil-fold-list (mapcar #'aq/evil-fold-origami-forward evil-fold-list))
@@ -285,8 +291,18 @@ leader-key是general定义的leader-key
 (use-package evil-commentary
   :after evil
   :config (evil-commentary-mode))
+
+(use-package evil-collection
+  :after evil
+  :config
+  (evil-collection-init))
+
 #+end_src
 
+** 非unicode编码文件探测
+#+begin_src emacs-lisp
+(use-package unicad)
+#+end_src
 * 系统设置
 同步系统PATH设置
 #+begin_src emacs-lisp
@@ -398,6 +414,11 @@ leader-key是general定义的leader-key
 (global-set-key (kbd "C-c l") #'org-store-link)
 (global-set-key (kbd "C-c a") #'org-agenda)
 (global-set-key (kbd "C-c c") #'org-capture)
+
+;; 自动展开加粗斜体等marker
+(use-package org-appear
+  :after org
+	:hook (org-mode . org-appear-mode))
 #+end_src
 
 ** Babel
