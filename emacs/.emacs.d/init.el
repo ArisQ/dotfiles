@@ -30,6 +30,7 @@
 ;; 某些mode下禁用line numbers
 (dolist (mode '(org-mode-hook
                 term-mode-hook
+                treemacs-mode-hook
                 shell-mode-hook
                 eshel-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
@@ -84,8 +85,14 @@
   :ensure t
   :init (doom-modeline-mode 1)
   :custom ((doom-modeline-height 15)))
+
+;; https://github.com/doomemacs/themes/tree/screenshots
 (use-package doom-themes
-  :init (load-theme 'doom-monokai-machine t))
+  :init (load-theme 'doom-opera-light t))
+  ;; :init (load-theme 'doom-tomorrow-day t))
+  ;; :init (load-theme 'doom-one-light t))
+  ;; :init (load-theme 'doom-one t))
+  ;; :init (load-theme 'doom-monokai-machine t))
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
