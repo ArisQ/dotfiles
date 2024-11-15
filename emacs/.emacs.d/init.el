@@ -440,6 +440,7 @@
   :after yasnippet)
 
 (use-package company
+  :config (add-to-list 'company-backends '(company-yasnippet))
   :after lsp-mode
   :hook (lsp-mode . company-mode)
   :bind (:map company-active-map

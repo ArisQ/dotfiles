@@ -1,0 +1,24 @@
+# -*- mode: snippet -*-
+# name: skeleton
+# key: sk
+# --
+
+syntax = "proto3";
+
+option go_package = "${1:github.com/ArisQ/example}";
+
+package ${2:com.github.arisq.example};
+
+import "google/protobuf/empty.proto";
+
+service ${3:Greeter} {
+    rpc ${4:SayHello}($4Request) returns ($4Reply) {}
+}
+
+message $4Request {
+  string name = 1;
+}
+
+message $4Reply {
+  string message = 1;
+}
