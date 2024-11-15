@@ -94,6 +94,7 @@
 #+end_src
 
 * UI增强
+
 #+begin_src emacs-lisp
 ;; 首次安装需要运行
 ;; M-x all-the-icons-install-fonts
@@ -117,6 +118,7 @@
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
 #+end_src
+
 * 功能增强
 ** 命令补全（Ivy-Counsel-Swiper）
 #+begin_src emacs-lisp
@@ -425,6 +427,7 @@ leader-key是general定义的leader-key
 ;; 自动展开加粗斜体等marker
 (use-package org-appear
   :after org
+  :config (setq org-appear-autolinks t)
 	:hook (org-mode . org-appear-mode))
 #+end_src
 
@@ -508,6 +511,9 @@ leader-key是general定义的leader-key
 #+end_src
 
 ** Snippets
+
+[[http://joaotavora.github.io/yasnippet/snippet-development.html][snippet development doc]]
+
 #+begin_src emacs-lisp
 (use-package yasnippet
   :config (yas-global-mode 1))
@@ -567,10 +573,11 @@ leader-key是general定义的leader-key
 ;;  :config (lsp-enable-which-key-integration t))
 
 (use-package lsp-ui
-  :commands (lsp-ui-mode))
-;;  :hook (lsp-mode . lsp-ui-mode)
-;;  :custom
-;;  (lsp-ui-doc-position 'bottom))
+  :config (setq lsp-ui-imenu-auto-refresh t)
+  :hook (lsp-mode . lsp-ui-mode)
+  :custom
+  (lsp-ui-doc-position 'bottom))
+
 (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
 (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 
@@ -805,6 +812,7 @@ TODO
 
 
 * Custom Plugin
+
 #+begin_src emacs-lisp
 (add-to-list 'load-path
              (concat user-emacs-directory "my-plugins")
@@ -813,3 +821,4 @@ TODO
 ;; (use-package my-plugin
 ;;   :load-path (concat user-emacs-directory "my-plugins/my-plugin.el"))
 #+end_src
+

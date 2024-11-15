@@ -371,6 +371,7 @@
 ;; 自动展开加粗斜体等marker
 (use-package org-appear
   :after org
+  :config (setq org-appear-autolinks t)
 	:hook (org-mode . org-appear-mode))
 
 
@@ -484,10 +485,11 @@
 ;;  :config (lsp-enable-which-key-integration t))
 
 (use-package lsp-ui
-  :commands (lsp-ui-mode))
-;;  :hook (lsp-mode . lsp-ui-mode)
-;;  :custom
-;;  (lsp-ui-doc-position 'bottom))
+  :config (setq lsp-ui-imenu-auto-refresh t)
+  :hook (lsp-mode . lsp-ui-mode)
+  :custom
+  (lsp-ui-doc-position 'bottom))
+
 (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
 (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 
