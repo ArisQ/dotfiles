@@ -36,6 +36,7 @@
 ;; 某些mode下禁用line numbers
 (dolist (mode '(org-mode-hook
                 term-mode-hook
+                vterm-mode-hook
                 treemacs-mode-hook
                 shell-mode-hook
                 eshel-mode-hook))
@@ -267,7 +268,9 @@ leader-key是general定义的leader-key
   (evil-mode 1)
   ;; (evil-set-leader '(normal motion) ";")
   (evil-set-leader 'normal ";")
-  (aq/set-evil-key "e" 'treemacs) ; 太浪费，不常用，但占用了短快捷键
+  (aq/set-evil-key "ee" 'treemacs) ;; 太浪费，不常用，但占用了短快捷键
+  (aq/set-evil-key "ewe" 'treemacs-edit-workspaces)
+  (aq/set-evil-key "es" 'treemacs-switch-workspace)
   (aq/set-evil-key "q" 'quit-window)
   (aq/set-evil-key "x" 'delete-window)
   (aq/set-evil-key "k" 'kill-buffer)
@@ -326,6 +329,7 @@ leader-key是general定义的leader-key
 #+end_src
 
 * OrgMode
+
 #+begin_src emacs-lisp
 (defun aq/org-mode-setup ()
     (org-indent-mode)
@@ -363,6 +367,9 @@ leader-key是general定义的leader-key
 	(setq org-agenda-files (directory-files-recursively "~/Nextcloud/OrgMode/" "\\.org$"))
 	(setq org-directory "~/Nextcloud/OrgMode/")
 
+  ;; LaTeX preview scale
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 3.0))
+
 	;; org mode heading font size
 	(dolist (face '((org-level-1 . 1.2)
 					(org-level-2 . 1.1)
@@ -397,7 +404,7 @@ leader-key是general定义的leader-key
 
 ;; org mode 居中显示
 (defun aq/org-mode-visual-fill ()
-	(setq visual-fill-column-width 100
+	(setq visual-fill-column-width 120
 	visual-fill-column-center-text t)
 	(visual-fill-column-mode))
 (use-package visual-fill-column
@@ -431,6 +438,18 @@ leader-key是general定义的leader-key
 	:hook (org-mode . org-appear-mode))
 #+end_src
 
+** 图片
+
+从剪贴板粘贴图片 ~org-download-clipboard~
+macOS依赖 =pngpaste=
+
+#+begin_src emacs-lisp
+(use-package org-download
+  :config
+  (setq org-download-heading-lvl nil))
+#+end_src
+
+
 ** Babel
 #+begin_src emacs-lisp
 
@@ -451,7 +470,38 @@ leader-key是general定义的leader-key
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'aq/org-babel-tangle-config)))
 #+end_src
 
+
+** 自定义
+*** 发版记录
+
+从org文件的property中提取信息，注意修改 ~#+PROPERTY:~ 后需要 ~C-c C-c~ 进行更新
+
+#+begin_src emacs-lisp
+
+;; 获取上次发版的版本号
+(defun aq/application-publish-notification/get-last-version ()
+  (save-excursion
+    (goto-char (point-min))
+    (re-search-forward "/-/compare/[a-z0-9\\.]*\\.\\.\\.\\\([a-z0-9\\.]*\\\)\\\W" nil t 1)
+    (match-string-no-properties 1)))
+
+;; 生成发版时间，最早为两分钟以后，取整到5分钟的整数倍
+(defun aq/application-publish-notification/publish-time ()
+  (let ((time (decode-time (time-add (current-time) 120)))
+        (r 5))
+    (format-time-string "%Y/%-m/%-d - %H:%M"
+                        (org-encode-time
+                         (apply #'list
+                                0 (* r (ceiling (nth 1 time) r))
+                                (nthcdr 2 time))))))
+#+end_src
+
 * EShell
+
+* VTerm
+#+begin_src emacs-lisp
+(use-package vterm)
+#+end_src
 * 程序开发
 
 需求
@@ -459,7 +509,7 @@ leader-key是general定义的leader-key
 - 自动补全
 - debug运行
 - snippets
-  
+
 ** Project
 #+begin_src emacs-lisp
 (use-package projectile
@@ -520,10 +570,12 @@ leader-key是general定义的leader-key
 (use-package yasnippet-snippets
   :after yasnippet)
 #+end_src
+
 ** 自动补全
 #+begin_src emacs-lisp
+  ;; :config
+  ;; (add-to-list 'company-backends '(company-capf company-yasnippet))
 (use-package company
-  :config (add-to-list 'company-backends '(company-yasnippet))
   :after lsp-mode
   :hook (lsp-mode . company-mode)
   :bind (:map company-active-map
@@ -537,12 +589,21 @@ leader-key是general定义的leader-key
   :hook (company-mode . company-box-mode))
 #+end_src
 ** Treemacs
+
+~treemacs-edit-workspaces~ 编辑workspace，~C-c C-c~ 保存
+
 #+begin_src emacs-lisp
 (use-package treemacs
   :defer t
-  :config (treemacs-follow-mode t))
+  :config
+  (treemacs-follow-mode t)
+  (treemacs-project-follow-mode t))
 (use-package treemacs-evil :after (treemacs evil))
-(use-package treemacs-projectile :after (treemacs projectile))
+
+(use-package treemacs-projectile
+  :after (treemacs projectile))
+;; :hook (projectile-after-switch-project-hook . treemacs-display-current-project-exclusively))
+
 (use-package treemacs-icons-dired :hook (dired-mode . treemacs-icons-dired-enable-once))
 (use-package treemacs-magit :after (treemacs magit))
 
@@ -566,6 +627,7 @@ leader-key是general定义的leader-key
          (c-mode . lsp-deferred)
          (c++-mode . lsp-deferred)
          (python-mode . lsp-deferred)
+         (lua-mode . lsp-deferred)
          (java-mode . lsp-deferred)
          (dart-mode . lsp-deferred)
          (meson-mode . lsp-deferred)
@@ -688,8 +750,12 @@ leader-key是general定义的leader-key
 
 *** TODO https://github.com/purcell/envrc
 
-** Golang(TODO remove?)
+** Golang
 使用lsp-mode，去除go-mode?
+
+references:
+[[https://github.com/golang/tools/blob/master/gopls/doc/emacs.md][gopls emacs doc]]
+[[https://github.com/golang/tools/blob/master/gopls/doc/settings.md][gopls setting]]
 
 #+begin_src emacs-lisp
 (use-package go-mode)
@@ -708,14 +774,39 @@ leader-key是general定义的leader-key
 (use-package protobuf-mode
   :bind (("C-c b" . 'aq/buf-generate)))
 ;;(global-set-key (kbd "C-c b") 'aq/buf-generate)
-#+end_src
 
-#+begin_src emacs-lisp
 ;; (use-package dap-dlv-go)
 (require 'dap-dlv-go)
 
 (use-package go-playground)
 #+end_src
+
+*** ~.dir-locals.el~ 项目特定配置示例
+#+begin_src emacs-lisp :tangle no
+;;; Directory Local Variables            -*- no-byte-compile: t -*-
+;;; For more information see (info "(emacs) Directory Variables")
+
+((go-mode . ((lsp-go-goimports-local . "gateway")
+			 (lsp-go-build-flags . ["-tags=wireinject"]))))
+#+end_src
+
+** Lua
+#+begin_src emacs-lisp
+(use-package lua-mode)
+#+end_src
+
+** Vue
+
+#+begin_src emacs-lisp
+(use-package vue-mode
+  :hook
+  (mmm-mode . (lambda () (set-face-background 'mmm-default-submode-face "#fafafa"))))
+  ;; (mmm-mode-hook . (lambda () (set-face-background 'mmm-default-submode-face nil))))
+#+end_src
+
+安装lsp
+~M-x~ ~lsp-install-server~ ~RET~ ~vue-semantic-server RET~
+
 ** Dart/Flutter
 #+begin_src emacs-lisp
 (use-package dart-mode)
@@ -743,6 +834,24 @@ run by =M-x slime=
 ** YAML
 #+begin_src emacs-lisp
 (use-package yaml-mode)
+#+end_src
+
+** SQLite
+
+[[https://christiantietze.de/posts/2024/01/emacs-sqlite-mode-open-sqlite-files-automatically/]]
+
+#+begin_src emacs-lisp
+(use-package sqlite-mode
+  :config
+  (defun aq/sqlite-view-file-magically ()
+    "Runs `sqlite-mode-open-file' on the file name visited by the
+current buffer, killing it."
+    (require 'sqlite-mode)
+    (let ((file-name buffer-file-name))
+      (kill-current-buffer)
+      (sqlite-mode-open-file file-name)))
+
+  (add-to-list 'magic-mode-alist '("SQLite format 3\x00" . aq/sqlite-view-file-magically)))
 #+end_src
 
 ** TODO 其他配置

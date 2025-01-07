@@ -30,6 +30,7 @@
 ;; 某些mode下禁用line numbers
 (dolist (mode '(org-mode-hook
                 term-mode-hook
+                vterm-mode-hook
                 treemacs-mode-hook
                 shell-mode-hook
                 eshel-mode-hook))
@@ -224,7 +225,9 @@
   (evil-mode 1)
   ;; (evil-set-leader '(normal motion) ";")
   (evil-set-leader 'normal ";")
-  (aq/set-evil-key "e" 'treemacs) ; 太浪费，不常用，但占用了短快捷键
+  (aq/set-evil-key "ee" 'treemacs) ;; 太浪费，不常用，但占用了短快捷键
+  (aq/set-evil-key "ewe" 'treemacs-edit-workspaces)
+  (aq/set-evil-key "es" 'treemacs-switch-workspace)
   (aq/set-evil-key "q" 'quit-window)
   (aq/set-evil-key "x" 'delete-window)
   (aq/set-evil-key "k" 'kill-buffer)
@@ -307,6 +310,9 @@
 	(setq org-agenda-files (directory-files-recursively "~/Nextcloud/OrgMode/" "\\.org$"))
 	(setq org-directory "~/Nextcloud/OrgMode/")
 
+  ;; LaTeX preview scale
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 3.0))
+
 	;; org mode heading font size
 	(dolist (face '((org-level-1 . 1.2)
 					(org-level-2 . 1.1)
@@ -341,7 +347,7 @@
 
 ;; org mode 居中显示
 (defun aq/org-mode-visual-fill ()
-	(setq visual-fill-column-width 100
+	(setq visual-fill-column-width 120
 	visual-fill-column-center-text t)
 	(visual-fill-column-mode))
 (use-package visual-fill-column
@@ -374,6 +380,10 @@
   :config (setq org-appear-autolinks t)
 	:hook (org-mode . org-appear-mode))
 
+(use-package org-download
+  :config
+  (setq org-download-heading-lvl nil))
+
 
 
 (defun aq/org-babel-tangle-config ()
@@ -388,6 +398,25 @@
       (org-babel-tangle))))
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'aq/org-babel-tangle-config)))
+
+;; 获取上次发版的版本号
+(defun aq/application-publish-notification/get-last-version ()
+  (save-excursion
+    (goto-char (point-min))
+    (re-search-forward "/-/compare/[a-z0-9\\.]*\\.\\.\\.\\\([a-z0-9\\.]*\\\)\\\W" nil t 1)
+    (match-string-no-properties 1)))
+
+;; 生成发版时间，最早为两分钟以后，取整到5分钟的整数倍
+(defun aq/application-publish-notification/publish-time ()
+  (let ((time (decode-time (time-add (current-time) 120)))
+        (r 5))
+    (format-time-string "%Y/%-m/%-d - %H:%M"
+                        (org-encode-time
+                         (apply #'list
+                                0 (* r (ceiling (nth 1 time) r))
+                                (nthcdr 2 time))))))
+
+(use-package vterm)
 
 (use-package projectile
   :diminish projectile-mode
@@ -439,8 +468,9 @@
 (use-package yasnippet-snippets
   :after yasnippet)
 
+;; :config
+  ;; (add-to-list 'company-backends '(company-capf company-yasnippet))
 (use-package company
-  :config (add-to-list 'company-backends '(company-yasnippet))
   :after lsp-mode
   :hook (lsp-mode . company-mode)
   :bind (:map company-active-map
@@ -455,9 +485,15 @@
 
 (use-package treemacs
   :defer t
-  :config (treemacs-follow-mode t))
+  :config
+  (treemacs-follow-mode t)
+  (treemacs-project-follow-mode t))
 (use-package treemacs-evil :after (treemacs evil))
-(use-package treemacs-projectile :after (treemacs projectile))
+
+(use-package treemacs-projectile
+  :after (treemacs projectile))
+;; :hook (projectile-after-switch-project-hook . treemacs-display-current-project-exclusively))
+
 (use-package treemacs-icons-dired :hook (dired-mode . treemacs-icons-dired-enable-once))
 (use-package treemacs-magit :after (treemacs magit))
 
@@ -478,6 +514,7 @@
          (c-mode . lsp-deferred)
          (c++-mode . lsp-deferred)
          (python-mode . lsp-deferred)
+         (lua-mode . lsp-deferred)
          (java-mode . lsp-deferred)
          (dart-mode . lsp-deferred)
          (meson-mode . lsp-deferred)
@@ -557,6 +594,13 @@
 
 (use-package go-playground)
 
+(use-package lua-mode)
+
+(use-package vue-mode
+  :hook
+  (mmm-mode . (lambda () (set-face-background 'mmm-default-submode-face "#fafafa"))))
+  ;; (mmm-mode-hook . (lambda () (set-face-background 'mmm-default-submode-face nil))))
+
 (use-package dart-mode)
 (use-package lsp-dart
   :config
@@ -573,6 +617,18 @@
   :hook (java-mode . lsp))
 
 (use-package yaml-mode)
+
+(use-package sqlite-mode
+  :config
+  (defun aq/sqlite-view-file-magically ()
+    "Runs `sqlite-mode-open-file' on the file name visited by the
+current buffer, killing it."
+    (require 'sqlite-mode)
+    (let ((file-name buffer-file-name))
+      (kill-current-buffer)
+      (sqlite-mode-open-file file-name)))
+
+  (add-to-list 'magic-mode-alist '("SQLite format 3\x00" . aq/sqlite-view-file-magically)))
 
 ;; See https://github.com/emacs-eaf/emacs-application-framework/wiki/Customization
 ;; (use-package eaf
