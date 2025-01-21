@@ -1,0 +1,4 @@
+* Rime输入法配置
+
+由于在linux和mac上的配置位置不同，linux为 ~~/.config/fcitx/rime/~ , mac为 ~~/Library/Rime/~ ，
+因此，配置放在 ~dotfiles/rime~ 中，并软链到 ~dotfiles/rime-linux/.config/fctix/rime~ 和 ~dotfiles/rime-mac/Library/Rime~ 。 安装时，不同系统分别用 ~stow rime-linux~ 和 ~stow rime-mac~ 。
