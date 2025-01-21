@@ -1,0 +1,4 @@
+# 双拼上屏原始字母
+# https://github.com/rime/rime-double-pinyin/issues/16
+patch:
+  translator/preedit_format: []
