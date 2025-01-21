@@ -89,11 +89,11 @@
 
 ;; https://github.com/doomemacs/themes/tree/screenshots
 (use-package doom-themes
-  :init (load-theme 'doom-opera-light t))
-  ;; :init (load-theme 'doom-tomorrow-day t))
-  ;; :init (load-theme 'doom-one-light t))
-  ;; :init (load-theme 'doom-one t))
+  :init (load-theme 'doom-one t))
   ;; :init (load-theme 'doom-monokai-machine t))
+  ;; :init (load-theme 'doom-tomorrow-day t))
+  ;; :init (load-theme 'doom-opera-light t))
+  ;; :init (load-theme 'doom-one-light t))
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
@@ -268,8 +268,11 @@
 
 (use-package unicad)
 
-(use-package exec-path-from-shell)
-(when (memq window-system '(mac ns x))
+(use-package exec-path-from-shell
+  :if (memq window-system '(mac ns x))
+  :config
+  (dolist (var '("LANG" "LC_CTYPE" "LC_ALL"))
+    (add-to-list 'exec-path-from-shell-variables var))
   (exec-path-from-shell-initialize))
 
 (setq mac-command-modifier 'meta)
@@ -359,7 +362,8 @@
 	(org-babel-do-load-languages
 	'org-babel-load-languages
 	'((emacs-lisp . t)
-;;       (go . t)
+      ;; (go . t)
+      (scheme . t)
 		(python . t)))
 	(setq org-confirm-babel-evaluate nil))
 
@@ -367,6 +371,7 @@
 	(require 'org-tempo)
 	(add-to-list 'org-structure-template-alist '("sh" . "src shell"))
 	(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+	(add-to-list 'org-structure-template-alist '("scm" . "src scheme"))
 	(add-to-list 'org-structure-template-alist '("py" . "src python")))
 
 ;; org mode (Refer: org mode guide)
@@ -434,7 +439,8 @@
   ;; add cmake sub project
   ;; https://github.com/bbatsov/projectile/issues/1130#issuecomment-1123237339
   (setq projectile-project-root-files-bottom-up
-        (cons "CMakeLists.txt" projectile-project-root-files-bottom-up)))
+        (cons "meson.build"
+              (cons "CMakeLists.txt" projectile-project-root-files-bottom-up))))
 
 ;;  (setq projectile-switch-project-action 'neotree-projectile-action))
 (use-package counsel-projectile
@@ -536,6 +542,9 @@
   :hook (lsp-after-open lsp-origami-try-enable))
 
 (use-package dap-mode)
+;; :config (dap-auto-configure-mode)
+;;  :hook (dap-stopped . (lambda (arg) (call-interactively #'dap-hydra))))
+
 (use-package flycheck
   :ensure t
   :hook
@@ -610,6 +619,12 @@
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
 ;; Replace "sbcl" with the path to your implementation
 (setq inferior-lisp-program "sbcl")
+
+(use-package geiser-guile
+  :config
+  (setq process-environment
+        (append '("LANG=en_US.UTF-8" "LC_ALL=en_US.UTF-8")
+                process-environment)))
 
 ;; (require 'lsp-java)
 ;; (add-hook 'java-mode-hook #'lsp)

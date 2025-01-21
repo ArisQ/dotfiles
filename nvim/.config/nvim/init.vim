@@ -70,7 +70,7 @@ set noequalalways
 " autocmd BufWritePre *.go GoImports
 nnoremap <leader>gb :GoBuild<CR>
 nnoremap <leader>gr :GoRun<CR>
-nnoremap <leader>gt :GoTest<CR>
+nnoremap <leader>gtt :GoTest<CR>
 
 " bad
 nnoremap <leader>gtf :GoTestFunc<CR>
