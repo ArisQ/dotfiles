@@ -439,8 +439,7 @@
   ;; add cmake sub project
   ;; https://github.com/bbatsov/projectile/issues/1130#issuecomment-1123237339
   (setq projectile-project-root-files-bottom-up
-        (cons "meson.build"
-              (cons "CMakeLists.txt" projectile-project-root-files-bottom-up))))
+        (cons "meson.build" (cons "CMakeLists.txt" projectile-project-root-files-bottom-up))))
 
 ;;  (setq projectile-switch-project-action 'neotree-projectile-action))
 (use-package counsel-projectile
@@ -622,6 +621,7 @@
 
 (use-package geiser-guile
   :config
+  (setq geiser-guile-binary "guile-3.0")
   (setq process-environment
         (append '("LANG=en_US.UTF-8" "LC_ALL=en_US.UTF-8")
                 process-environment)))
@@ -644,6 +644,19 @@ current buffer, killing it."
       (sqlite-mode-open-file file-name)))
 
   (add-to-list 'magic-mode-alist '("SQLite format 3\x00" . aq/sqlite-view-file-magically)))
+
+;; (use-package ebuild-mode)
+(require 'ebuild-mode)
+
+;; language-server
+;; https://termux-language-server.readthedocs.io/en/latest/resources/configure.html
+;; TODO: 未验证
+(make-lsp-client
+ :new-connection (lsp-stdio-connection
+                  `(,(executable-find "termux-language-server")))
+ :activation-fn (lsp-activate-on "build.sh" "*.subpackage.sh" "PKGBUILD"
+                                 "*.install" "makepkg.conf" "*.ebuild" "*.eclass" "color.map" "make.conf")
+ :server-id "termux")
 
 ;; See https://github.com/emacs-eaf/emacs-application-framework/wiki/Customization
 ;; (use-package eaf
