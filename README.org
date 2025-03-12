@@ -7,3 +7,9 @@ stow emacs
 #+end_src
 
 [[https://brandon.invergo.net/news/2012-05-26-using-gnu-stow-to-manage-your-dotfiles.html][参考]]
+
+** =~/.env.d=
+
+不同应用都需要在安装后，在shell中设置环境变量或添加到PATH，通常要修改 ~.bashrc~ 或者 ~.zshrc~ 与shell配置耦合。因此，参考 [[https://wiki.gentoo.org/wiki//etc/env.d][gentoo env.d]] 设置 =~/.env.d= 目录，应用将配置文件链接到该目录，shell在启动时从该目录加载环境变量。
+
+加载参考 [[file:zsh/.zshrc::123][zshrc]]

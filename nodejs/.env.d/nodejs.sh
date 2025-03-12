@@ -1,4 +1,3 @@
 
-# $(yarn global bin)
-export PATH="/opt/homebrew/opt/node@18/bin:$HOME/.yarn/bin:$PATH"
+export PATH="/opt/homebrew/opt/node@18/bin:$(yarn global bin):$PATH"
 
