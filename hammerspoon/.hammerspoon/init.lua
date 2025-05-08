@@ -1,0 +1,15 @@
+hs.hotkey.bind({"cmd", "alt", "ctrl"}, "W", function()
+  hs.alert.show("Hello World!")
+end)
+
+-- hs.loadSpoon("AClock")
+-- hs.hotkey.bind({"cmd", "alt", "ctrl"}, "C", function()
+--   spoon.AClock:toggleShow()
+-- end)
+
+hs.loadSpoon("AClock")
+hs.hotkey.bind({"ctrl"}, "T", function()
+  spoon.AClock:show()
+end, function ()
+  spoon.AClock:hide()
+end)

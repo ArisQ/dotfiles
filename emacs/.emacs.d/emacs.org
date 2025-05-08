@@ -13,6 +13,9 @@
 ;; (menu-bar-mode -1)
 ;; (setq visible-bell t)
 
+;; 窗口无边框
+(add-to-list 'default-frame-alist '(undecorated . t))
+
 
 ;; Themes
 ;; https://emacsthemes.com/
@@ -47,6 +50,7 @@
 #+end_src
 
 ** 字体
+
 #+begin_src emacs-lisp
 ;; (set-face-attribute 'default nil :font "Fira Code Retina" :height 280)
 ;; (set-face-attribute 'default nil :font "WenQuanYi Zen Hei Mono" :height 160)
@@ -61,6 +65,11 @@
 (set-face-attribute 'fixed-pitch nil :font "FiraCode Nerd Font" :height 150)
 (set-face-attribute 'variable-pitch nil :font "YaHei Consolas Hybrid" :height 150 :weight 'regular)
 
+#+end_src
+
+** locale
+#+begin_src emacs-lisp
+(set-locale-environment "zh_CN.UTF-8")
 #+end_src
 
 * 包管理
@@ -111,10 +120,10 @@
 ;; https://github.com/doomemacs/themes/tree/screenshots
 (use-package doom-themes
   :init (load-theme 'doom-one t))
+  ;; :init (load-theme 'doom-one-light t))
   ;; :init (load-theme 'doom-monokai-machine t))
   ;; :init (load-theme 'doom-tomorrow-day t))
   ;; :init (load-theme 'doom-opera-light t))
-  ;; :init (load-theme 'doom-one-light t))
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
@@ -257,6 +266,12 @@ leader-key是general定义的leader-key
   (global-undo-tree-mode)
   (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree"))))
 
+;; fix dap-debug 可能修改 treemacs--in-this-buffer 的问题
+(defun aq/toggle-treemacs ()
+  (interactive)
+  (setq-default treemacs--in-this-buffer nil)
+  (treemacs))
+
 (use-package evil
   :init
   (setq evil-undo-system 'undo-tree)
@@ -268,9 +283,11 @@ leader-key是general定义的leader-key
   (evil-mode 1)
   ;; (evil-set-leader '(normal motion) ";")
   (evil-set-leader 'normal ";")
-  (aq/set-evil-key "ee" 'treemacs) ;; 太浪费，不常用，但占用了短快捷键
+  ;; (aq/set-evil-key "ee" 'treemacs)
+  (aq/set-evil-key "ee" 'aq/toggle-treemacs)
   (aq/set-evil-key "ewe" 'treemacs-edit-workspaces)
   (aq/set-evil-key "es" 'treemacs-switch-workspace)
+  (aq/set-evil-key "en" 'neotree-toggle)
   (aq/set-evil-key "q" 'quit-window)
   (aq/set-evil-key "x" 'delete-window)
   (aq/set-evil-key "k" 'kill-buffer)
@@ -385,6 +402,9 @@ leader-key是general定义的leader-key
 	;;  (message "%s" (cdr face)))
 	;;  (set-face-attribute (car face) nil :font "YaHei Consolas Hybrid" :weight 'regular :height (cdr face)))
 	(set-face-attribute (car face) nil :font "FiraCode Nerd Font" :weight 'regular :height (cdr face)))
+
+  ;; column view font size
+	(set-face-attribute 'org-column nil :height 150)
 
 	;; Ensure that anything that should be fixed-pitch in Org files appears that way
 	(set-face-attribute 'org-block nil    :foreground nil :inherit 'fixed-pitch)
@@ -619,7 +639,35 @@ macOS依赖 =pngpaste=
 ;; (global-set-key (kbd "C-c f e") 'neotree-toggle)
 #+end_src
 
+** Neotree
+#+begin_src emacs-lisp
+(defun aq/neotree-follow ()
+  "Auto update neotree to follow current file."
+  (when (neo-global--window-exists-p)
+    (neotree-find buffer-file-name)))
+;; (when (and (neo-global--window-exists-p)
+;;            buffer-file-name)
+;;   (neotree-find buffer-file-name)))
+
+(use-package neotree
+  :config
+  (setq neo-theme (if (display-graphic-p) 'icons))
+  (setq neo-autorefresh t)
+  (setq neo-smart-open t))
+;; (setq projectile-switch-project-action #'neotree-projectile-action))
+;; :hook
+;; (buffer-list-update . aq/neotree-follow))
+#+end_src
+
+** Treesit
+#+begin_src emacs-lisp
+(use-package treesit-auto
+  :config
+  (global-treesit-auto-mode))
+#+end_src
+
 ** Lsp
+
 #+begin_src emacs-lisp
 (defun aq/lsp-mode-setup ()
   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
@@ -639,7 +687,10 @@ macOS依赖 =pngpaste=
          (java-mode . lsp-deferred)
          (dart-mode . lsp-deferred)
          (meson-mode . lsp-deferred)
+         (typescript-mode . lsp-deferred)
+         (vue-mode . lsp-deferred)
          (lsp-mode . aq/lsp-mode-setup)))
+         ;; (scheme-mode . lsp-deferred)
 ;; (lsp-mode . lsp-enable-which-key-integration)))
 ;;  :config (lsp-enable-which-key-integration t))
 
@@ -650,6 +701,7 @@ macOS依赖 =pngpaste=
   (lsp-ui-doc-position 'bottom))
 
 (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+
 (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 
 ;; (use-package origami)
@@ -667,6 +719,44 @@ macOS依赖 =pngpaste=
 ;; :config
 ;; (add-hook 'after-init-hook #'global-flycheck-mode))
 #+end_src
+
+
+ 当使用dap-debug时，有可能会设置treemacs--in-this-buffer变量的global值，导致treemacs-projectile-follow-mode失效
+ 可以通过使用下面的watch treemacs--in-this-buffer方法来确认debug时设置该变量的调用堆栈，但是看起来加了watcher且wacther中打印trace就正常，不打印trace就会复现，待排查
+ 先在打开treemacs的过程中，清空下treemacs--in-this-buffer，有空再排查
+
+#+begin_src emacs-lisp :tangle nil
+(defun aq/my-treemacs-in-this-buffer-watcher ()
+  (let ((my-done-table (make-hash-table :test 'equal)))
+    (lambda (symbol newval operation where)
+      (let ((name (buffer-name)))
+        (message "treemacs--in-this-buffer changed: %s → %s (operation: %s) %s" (symbol-value symbol) newval operation where)
+        (message "buffer %s" name)
+        (if (not (gethash name my-done-table))
+            (progn
+              (puthash name t my-done-table)
+              (message "Backtrace:\n%s" (with-output-to-string (backtrace)))))))))
+;; (message "treemacs--in-this-buffer changed: %s → %s (operation: %s)" (symbol-value symbol) newval operation)
+;; (message "buffer %s" name))))
+
+
+(let ((f (aq/my-treemacs-in-this-buffer-watcher)))
+  (add-variable-watcher
+   'treemacs--in-this-buffer
+   f))
+
+(add-variable-watcher
+ 'treemacs--in-this-buffer
+ (lambda (symbol newval operation where)
+   (message "treemacs--in-this-buffer changed: %s → %s (operation: %s) %s" (symbol-value symbol) newval operation where)
+   (message "buffer %s" (buffer-name))))
+   ;; (message "Backtrace:\n%s" (with-output-to-string (backtrace)))))
+
+(remove-variable-watcher
+ 'treemacs--in-this-buffer
+ #'aq/my-treemacs-in-this-buffer-watcher)
+#+end_src
+
 ** C++
 首次安装时运行 ~dap-cpptools-setup~
 
@@ -774,8 +864,8 @@ references:
 ;; Set up before-save hooks to format buffer and add/delete imports.
 ;; Make sure you don't have other gofmt/goimports hooks enabled.
 (defun lsp-go-install-save-hooks ()
- (add-hook 'before-save-hook #'lsp-format-buffer t t)
- (add-hook 'before-save-hook #'lsp-organize-imports t t))
+  (add-hook 'before-save-hook #'lsp-format-buffer t t)
+  (add-hook 'before-save-hook #'lsp-organize-imports t t))
 (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
 
 (defun aq/buf-generate ()
@@ -783,6 +873,7 @@ references:
   (interactive)
   (shell-command "buf generate"))
 (use-package protobuf-mode
+  :config (setq c-basic-offset 2)
   :bind (("C-c b" . 'aq/buf-generate)))
 ;;(global-set-key (kbd "C-c b") 'aq/buf-generate)
 
@@ -806,13 +897,44 @@ references:
 (use-package lua-mode)
 #+end_src
 
-** Vue
+** Web
+
+*** Javascript / Typescript
+#+begin_src emacs-lisp
+(use-package typescript-mode)
+#+end_src
+
+- [[https://emacs-lsp.github.io/lsp-mode/page/lsp-typescript/][安装lsp]]
+
+~M-x ~lsp-install-server ~RET ~ts-ls RET~
+
+- [[https://emacs-lsp.github.io/dap-mode/page/configuration/#javascript][debug]]
 
 #+begin_src emacs-lisp
-(use-package vue-mode
-  :hook
-  (mmm-mode . (lambda () (set-face-background 'mmm-default-submode-face "#fafafa"))))
-  ;; (mmm-mode-hook . (lambda () (set-face-background 'mmm-default-submode-face nil))))
+(require 'dap-chrome)
+;; run dap-chrome-setup
+#+end_src
+
+*** Vue
+
+#+begin_src emacs-lisp
+(use-package vue-mode)
+;; :config
+;; (setq js-indent-level 2)        ;; JS 缩进
+;; (setq css-indent-offset 2)     ;; CSS 缩进
+;; (setq web-mode-markup-indent-offset 2) ;; HTML 缩进
+;; (setq web-mode-code-indent-offset 2)   ;; JS in HTML 缩进
+;; (setq web-mode-css-indent-offset 2))   ;; CSS in HTML 缩进
+;; :hook
+;; (mmm-mode . (lambda () (set-face-background 'mmm-default-submode-face "#fafafa"))))
+;; (mmm-mode-hook . (lambda () (set-face-background 'mmm-default-submode-face nil))))
+
+(use-package prettier
+  :config
+  ;; (setq prettier-enabled-parsers (angular babel babel-flow babel-ts css elm espree flow graphql html java json json5 json-stringify less lua markdown mdx meriyah php postgresql pug python ruby scss sh solidity svelte swift toml typescript vue xml yaml))
+  (setq prettier-enabled-parsers '(angular babel babel-flow babel-ts css elm espree flow graphql html java json-stringify less mdx meriyah php postgresql pug python ruby scss sh solidity svelte swift typescript vue xml))
+  (global-prettier-mode))
+
 #+end_src
 
 安装lsp
@@ -848,13 +970,31 @@ guile中测试locale方法
 #+end_src
 
 #+begin_src emacs-lisp
+(use-package paredit
+  :hook
+  (emacs-lisp-mode . enable-paredit-mode)
+  (scheme-mode . enable-paredit-mode))
+(use-package enhanced-evil-paredit
+  :hook
+  (paredit-mode . enhanced-evil-paredit-mode))
+
 (use-package geiser-guile
   :config
-  (setq geiser-guile-binary "guile-3.0")
   (setq process-environment
         (append '("LANG=en_US.UTF-8" "LC_ALL=en_US.UTF-8")
                 process-environment)))
+;; (setq geiser-guile-binary "guile-3.0")
+
+;; lsp
+(use-package lsp-scheme
+  :hook
+  (scheme-mode . lsp-scheme)
+  :config
+  (setq lsp-scheme-implementation "guile"))
 #+end_src
+
+#+RESULTS:
+| lsp-scheme | geiser-mode--maybe-activate |
 
 ** Java
 #+begin_src emacs-lisp
@@ -886,6 +1026,15 @@ current buffer, killing it."
   (add-to-list 'magic-mode-alist '("SQLite format 3\x00" . aq/sqlite-view-file-magically)))
 #+end_src
 
+** LaTeX
+#+begin_src emacs-lisp
+(use-package auctex
+  :config
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t)
+  (setq-default TeX-master nil))
+#+end_src
+
 ** Gentoo EBuild
 
 ebuild-mode不在elpa中, 需要使用系统包安装 ~sudo emerge --ask app-emacs/ebuild-mode~
@@ -894,17 +1043,16 @@ termux-language-server 通过venv安装, 并添加到PATH
 
 #+begin_src emacs-lisp
 ;; (use-package ebuild-mode)
-(require 'ebuild-mode)
-
-;; language-server
-;; https://termux-language-server.readthedocs.io/en/latest/resources/configure.html
-;; TODO: 未验证
-(make-lsp-client
- :new-connection (lsp-stdio-connection
-                  `(,(executable-find "termux-language-server")))
- :activation-fn (lsp-activate-on "build.sh" "*.subpackage.sh" "PKGBUILD"
-                                 "*.install" "makepkg.conf" "*.ebuild" "*.eclass" "color.map" "make.conf")
- :server-id "termux")
+(when (require 'ebuild-mode nil 'noerror)
+  ;; language-server
+  ;; https://termux-language-server.readthedocs.io/en/latest/resources/configure.html
+  ;; TODO: 未验证
+  (make-lsp-client
+   :new-connection (lsp-stdio-connection
+					`(,(executable-find "termux-language-server")))
+   :activation-fn (lsp-activate-on "build.sh" "*.subpackage.sh" "PKGBUILD"
+                                   "*.install" "makepkg.conf" "*.ebuild" "*.eclass" "color.map" "make.conf")
+   :server-id "termux"))
 #+end_src
 
 ** TODO 其他配置

@@ -1,0 +1,27 @@
+* [[https://github.com/nikitabobko/AeroSpace][AeroSpace]]
+
+** 禁用“显示器具有单独的空间”
+
+[[https://nikitabobko.github.io/AeroSpace/guide#a-note-on-displays-have-separate-spaces]]
+
+#+begin_src bash
+defaults write com.apple.spaces spans-displays -bool true && killall SystemUIServer
+#+end_src
+
+
+** 参考
+
+https://nikitabobko.github.io/AeroSpace/goodies
+
+*** borders
+
+https://github.com/FelixKratz/JankyBorders
+
+#+begin_src bash
+brew tap FelixKratz/formulae
+brew install borders
+#+end_src
+
+** 显示时间
+由于隐藏了状态栏，需要显示时间
+采用hammerspoon实现按住ctrl-t显示时间，详见hammerspoon配置

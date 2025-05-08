@@ -7,6 +7,9 @@
 ;; (menu-bar-mode -1)
 ;; (setq visible-bell t)
 
+;; 窗口无边框
+(add-to-list 'default-frame-alist '(undecorated . t))
+
 
 ;; Themes
 ;; https://emacsthemes.com/
@@ -52,6 +55,8 @@
 (set-face-attribute 'fixed-pitch nil :font "FiraCode Nerd Font" :height 150)
 (set-face-attribute 'variable-pitch nil :font "YaHei Consolas Hybrid" :height 150 :weight 'regular)
 
+(set-locale-environment "zh_CN.UTF-8")
+
 ;; MELPA community packages
 ;; Initialize package sources
 (require 'package)
@@ -90,10 +95,10 @@
 ;; https://github.com/doomemacs/themes/tree/screenshots
 (use-package doom-themes
   :init (load-theme 'doom-one t))
+  ;; :init (load-theme 'doom-one-light t))
   ;; :init (load-theme 'doom-monokai-machine t))
   ;; :init (load-theme 'doom-tomorrow-day t))
   ;; :init (load-theme 'doom-opera-light t))
-  ;; :init (load-theme 'doom-one-light t))
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
@@ -214,6 +219,12 @@
   (global-undo-tree-mode)
   (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree"))))
 
+;; fix dap-debug 可能修改 treemacs--in-this-buffer 的问题
+(defun aq/toggle-treemacs ()
+  (interactive)
+  (setq-default treemacs--in-this-buffer nil)
+  (treemacs))
+
 (use-package evil
   :init
   (setq evil-undo-system 'undo-tree)
@@ -225,9 +236,11 @@
   (evil-mode 1)
   ;; (evil-set-leader '(normal motion) ";")
   (evil-set-leader 'normal ";")
-  (aq/set-evil-key "ee" 'treemacs) ;; 太浪费，不常用，但占用了短快捷键
+  ;; (aq/set-evil-key "ee" 'treemacs)
+  (aq/set-evil-key "ee" 'aq/toggle-treemacs)
   (aq/set-evil-key "ewe" 'treemacs-edit-workspaces)
   (aq/set-evil-key "es" 'treemacs-switch-workspace)
+  (aq/set-evil-key "en" 'neotree-toggle)
   (aq/set-evil-key "q" 'quit-window)
   (aq/set-evil-key "x" 'delete-window)
   (aq/set-evil-key "k" 'kill-buffer)
@@ -328,6 +341,9 @@
 	;;  (message "%s" (cdr face)))
 	;;  (set-face-attribute (car face) nil :font "YaHei Consolas Hybrid" :weight 'regular :height (cdr face)))
 	(set-face-attribute (car face) nil :font "FiraCode Nerd Font" :weight 'regular :height (cdr face)))
+
+  ;; column view font size
+	(set-face-attribute 'org-column nil :height 150)
 
 	;; Ensure that anything that should be fixed-pitch in Org files appears that way
 	(set-face-attribute 'org-block nil    :foreground nil :inherit 'fixed-pitch)
@@ -439,7 +455,8 @@
   ;; add cmake sub project
   ;; https://github.com/bbatsov/projectile/issues/1130#issuecomment-1123237339
   (setq projectile-project-root-files-bottom-up
-        (cons "meson.build" (cons "CMakeLists.txt" projectile-project-root-files-bottom-up))))
+        (cons "meson.build"
+              (cons "CMakeLists.txt" projectile-project-root-files-bottom-up))))
 
 ;;  (setq projectile-switch-project-action 'neotree-projectile-action))
 (use-package counsel-projectile
@@ -505,6 +522,27 @@
 ;; (use-package neotree)
 ;; (global-set-key (kbd "C-c f e") 'neotree-toggle)
 
+(defun aq/neotree-follow ()
+  "Auto update neotree to follow current file."
+  (when (neo-global--window-exists-p)
+    (neotree-find buffer-file-name)))
+;; (when (and (neo-global--window-exists-p)
+;;            buffer-file-name)
+;;   (neotree-find buffer-file-name)))
+
+(use-package neotree
+  :config
+  (setq neo-theme (if (display-graphic-p) 'icons))
+  (setq neo-autorefresh t)
+  (setq neo-smart-open t))
+;; (setq projectile-switch-project-action #'neotree-projectile-action))
+;; :hook
+;; (buffer-list-update . aq/neotree-follow))
+
+(use-package treesit-auto
+  :config
+  (global-treesit-auto-mode))
+
 (defun aq/lsp-mode-setup ()
   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
   (lsp-headerline-breadcrumb-mode)
@@ -523,7 +561,10 @@
          (java-mode . lsp-deferred)
          (dart-mode . lsp-deferred)
          (meson-mode . lsp-deferred)
+         (typescript-mode . lsp-deferred)
+         (vue-mode . lsp-deferred)
          (lsp-mode . aq/lsp-mode-setup)))
+         ;; (scheme-mode . lsp-deferred)
 ;; (lsp-mode . lsp-enable-which-key-integration)))
 ;;  :config (lsp-enable-which-key-integration t))
 
@@ -534,6 +575,7 @@
   (lsp-ui-doc-position 'bottom))
 
 (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+
 (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 
 ;; (use-package origami)
@@ -585,8 +627,8 @@
 ;; Set up before-save hooks to format buffer and add/delete imports.
 ;; Make sure you don't have other gofmt/goimports hooks enabled.
 (defun lsp-go-install-save-hooks ()
- (add-hook 'before-save-hook #'lsp-format-buffer t t)
- (add-hook 'before-save-hook #'lsp-organize-imports t t))
+  (add-hook 'before-save-hook #'lsp-format-buffer t t)
+  (add-hook 'before-save-hook #'lsp-organize-imports t t))
 (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
 
 (defun aq/buf-generate ()
@@ -594,6 +636,7 @@
   (interactive)
   (shell-command "buf generate"))
 (use-package protobuf-mode
+  :config (setq c-basic-offset 2)
   :bind (("C-c b" . 'aq/buf-generate)))
 ;;(global-set-key (kbd "C-c b") 'aq/buf-generate)
 
@@ -604,10 +647,27 @@
 
 (use-package lua-mode)
 
-(use-package vue-mode
-  :hook
-  (mmm-mode . (lambda () (set-face-background 'mmm-default-submode-face "#fafafa"))))
-  ;; (mmm-mode-hook . (lambda () (set-face-background 'mmm-default-submode-face nil))))
+(use-package typescript-mode)
+
+(require 'dap-chrome)
+;; run dap-chrome-setup
+
+(use-package vue-mode)
+;; :config
+;; (setq js-indent-level 2)        ;; JS 缩进
+;; (setq css-indent-offset 2)     ;; CSS 缩进
+;; (setq web-mode-markup-indent-offset 2) ;; HTML 缩进
+;; (setq web-mode-code-indent-offset 2)   ;; JS in HTML 缩进
+;; (setq web-mode-css-indent-offset 2))   ;; CSS in HTML 缩进
+;; :hook
+;; (mmm-mode . (lambda () (set-face-background 'mmm-default-submode-face "#fafafa"))))
+;; (mmm-mode-hook . (lambda () (set-face-background 'mmm-default-submode-face nil))))
+
+(use-package prettier
+  :config
+  ;; (setq prettier-enabled-parsers (angular babel babel-flow babel-ts css elm espree flow graphql html java json json5 json-stringify less lua markdown mdx meriyah php postgresql pug python ruby scss sh solidity svelte swift toml typescript vue xml yaml))
+  (setq prettier-enabled-parsers '(angular babel babel-flow babel-ts css elm espree flow graphql html java json-stringify less mdx meriyah php postgresql pug python ruby scss sh solidity svelte swift typescript vue xml))
+  (global-prettier-mode))
 
 (use-package dart-mode)
 (use-package lsp-dart
@@ -619,12 +679,27 @@
 ;; Replace "sbcl" with the path to your implementation
 (setq inferior-lisp-program "sbcl")
 
+(use-package paredit
+  :hook
+  (emacs-lisp-mode . enable-paredit-mode)
+  (scheme-mode . enable-paredit-mode))
+(use-package enhanced-evil-paredit
+  :hook
+  (paredit-mode . enhanced-evil-paredit-mode))
+
 (use-package geiser-guile
   :config
-  (setq geiser-guile-binary "guile-3.0")
   (setq process-environment
         (append '("LANG=en_US.UTF-8" "LC_ALL=en_US.UTF-8")
                 process-environment)))
+;; (setq geiser-guile-binary "guile-3.0")
+
+;; lsp
+(use-package lsp-scheme
+  :hook
+  (scheme-mode . lsp-scheme)
+  :config
+  (setq lsp-scheme-implementation "guile"))
 
 ;; (require 'lsp-java)
 ;; (add-hook 'java-mode-hook #'lsp)
@@ -645,18 +720,23 @@ current buffer, killing it."
 
   (add-to-list 'magic-mode-alist '("SQLite format 3\x00" . aq/sqlite-view-file-magically)))
 
-;; (use-package ebuild-mode)
-(require 'ebuild-mode)
+(use-package auctex
+  :config
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t)
+  (setq-default TeX-master nil))
 
-;; language-server
-;; https://termux-language-server.readthedocs.io/en/latest/resources/configure.html
-;; TODO: 未验证
-(make-lsp-client
- :new-connection (lsp-stdio-connection
-                  `(,(executable-find "termux-language-server")))
- :activation-fn (lsp-activate-on "build.sh" "*.subpackage.sh" "PKGBUILD"
-                                 "*.install" "makepkg.conf" "*.ebuild" "*.eclass" "color.map" "make.conf")
- :server-id "termux")
+;; (use-package ebuild-mode)
+(when (require 'ebuild-mode nil 'noerror)
+  ;; language-server
+  ;; https://termux-language-server.readthedocs.io/en/latest/resources/configure.html
+  ;; TODO: 未验证
+  (make-lsp-client
+   :new-connection (lsp-stdio-connection
+					`(,(executable-find "termux-language-server")))
+   :activation-fn (lsp-activate-on "build.sh" "*.subpackage.sh" "PKGBUILD"
+                                   "*.install" "makepkg.conf" "*.ebuild" "*.eclass" "color.map" "make.conf")
+   :server-id "termux"))
 
 ;; See https://github.com/emacs-eaf/emacs-application-framework/wiki/Customization
 ;; (use-package eaf
