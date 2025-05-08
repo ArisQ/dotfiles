@@ -10,7 +10,7 @@
 (tool-bar-mode -1)
 (tooltip-mode -1)
 (set-fringe-mode 10)
-;; (menu-bar-mode -1)
+(menu-bar-mode -1)
 ;; (setq visible-bell t)
 
 ;; 窗口无边框
@@ -103,6 +103,11 @@
 (use-package command-log-mode)
 #+end_src
 
+
+** 包基础设置
+#+begin_src emacs-lisp
+(use-package sqlite3)
+#+end_src
 * UI增强
 
 #+begin_src emacs-lisp

@@ -4,7 +4,7 @@
 (tool-bar-mode -1)
 (tooltip-mode -1)
 (set-fringe-mode 10)
-;; (menu-bar-mode -1)
+(menu-bar-mode -1)
 ;; (setq visible-bell t)
 
 ;; 窗口无边框
@@ -80,6 +80,8 @@
 ;; M-x global-command-log-mode
 ;; M-x clm/toggle-command-log-buffer
 (use-package command-log-mode)
+
+(use-package sqlite3)
 
 ;; 首次安装需要运行
 ;; M-x all-the-icons-install-fonts

@@ -54,8 +54,7 @@ beautiful.init(gears.filesystem.get_configuration_dir() .. "theme.lua")
 -- This is used later as the default terminal and editor to run.
 terminal = "kitty"
 -- editor = "nvim"
-editor = "emacs"
--- editor = os.getenv("EDITOR") or "nvim"
+editor = os.getenv("EDITOR") or "emacs"
 editor_cmd = terminal .. " -e " .. editor
 
 -- Default modkey.
@@ -345,7 +344,18 @@ globalkeys = gears.table.join(
               {description = "lua execute prompt", group = "awesome"}),
     -- Menubar
     awful.key({ modkey }, "p", function() menubar.show() end,
-              {description = "show the menubar", group = "launcher"})
+              {description = "show the menubar", group = "launcher"}),
+
+    -- awful.key({ modkey }, "e", function()
+    --     naughty.notify({ preset = naughty.config.presets.critical,
+    --         title = "Hello, awesome",
+    --         text = "hello naughty" })
+    -- end, {description = "show the menubar", group = "launcher"}),
+
+    -- Custom
+    awful.key({ }, "XF86AudioLowerVolume", function () awful.util.spawn("amixer -q sset Master 5%-") end),
+    awful.key({ }, "XF86AudioRaiseVolume", function () awful.util.spawn("amixer -q sset Master 5%+") end),
+    awful.key({ }, "XF86AudioMute", function () awful.util.spawn("amixer -q sset Master toggle") end)
 )
 
 clientkeys = gears.table.join(
@@ -509,7 +519,8 @@ awful.rules.rules = {
 
     -- Add titlebars to normal clients and dialogs
     { rule_any = {type = { "normal", "dialog" }
-      }, properties = { titlebars_enabled = true }
+      -- }, properties = { titlebars_enabled = true }
+      }, properties = { titlebars_enabled = false }
     },
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
