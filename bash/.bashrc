@@ -22,7 +22,14 @@ alias ll='ls -al'
 if [[ $- == *i* ]]; then
     bind '"\e[A": history-search-backward'
     bind '"\e[B": history-search-forward'
+
+    bind '"\C-p": history-search-backward'
+    bind '"\C-n": history-search-forward'
 fi
+
+
+# Set up fzf key bindings and fuzzy completion
+eval "$(fzf --bash)"
 
 
 # load application setting from ~/.env.d/*.sh
@@ -34,3 +41,4 @@ if [ -d "$HOME/.env.d" ]; then
   done
   unset i
 fi
+

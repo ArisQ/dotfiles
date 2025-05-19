@@ -116,8 +116,18 @@ alias vi="nvim"
 
 zstyle ':completion:*:sudo:*' environ PATH="$SUDO_PATH:$PATH"
 
-# Ctrl-U to kill to line begin instead of clear full line
-bindkey \^U backward-kill-line
+if [[ $- == *i* ]]; then
+	# Ctrl-U to kill to line begin instead of clear full line
+	bindkey \^U backward-kill-line
+
+    bindkey '^P' history-search-backward
+    bindkey '^N' history-search-forward
+fi
+
+
+# Set up fzf key bindings and fuzzy completion
+source <(fzf --zsh)
+
 
 # load application setting from ~/.env.d/*.sh
 if [ -d "$HOME/.env.d" ]; then

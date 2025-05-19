@@ -937,7 +937,7 @@ references:
 (use-package prettier
   :config
   ;; (setq prettier-enabled-parsers (angular babel babel-flow babel-ts css elm espree flow graphql html java json json5 json-stringify less lua markdown mdx meriyah php postgresql pug python ruby scss sh solidity svelte swift toml typescript vue xml yaml))
-  (setq prettier-enabled-parsers '(angular babel babel-flow babel-ts css elm espree flow graphql html java json-stringify less mdx meriyah php postgresql pug python ruby scss sh solidity svelte swift typescript vue xml))
+  (setq prettier-enabled-parsers '(angular babel babel-flow babel-ts css elm espree flow graphql html java json-stringify less mdx meriyah php postgresql pug ruby scss sh solidity svelte swift typescript vue xml))
   (global-prettier-mode))
 
 #+end_src
