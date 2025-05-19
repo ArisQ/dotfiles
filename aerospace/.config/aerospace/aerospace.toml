@@ -147,7 +147,7 @@ automatically-unhide-macos-hidden-apps = false
     alt-t = 'workspace Terminal'
     alt-u = 'workspace U'
     alt-v = 'workspace V'
-    alt-w = 'workspace Wechat'
+    alt-w = 'workspace Wework'
     alt-x = 'workspace X'
     alt-y = 'workspace Y'
     alt-z = 'workspace Zz'
@@ -181,7 +181,7 @@ automatically-unhide-macos-hidden-apps = false
     alt-shift-t = 'move-node-to-workspace Terminal'
     alt-shift-u = 'move-node-to-workspace U'
     alt-shift-v = 'move-node-to-workspace V'
-    alt-shift-w = 'move-node-to-workspace Wechat'
+    alt-shift-w = 'move-node-to-workspace Wework'
     alt-shift-x = 'move-node-to-workspace X'
     alt-shift-y = 'move-node-to-workspace Y'
     alt-shift-z = 'move-node-to-workspace Zz'
@@ -215,8 +215,8 @@ automatically-unhide-macos-hidden-apps = false
     shift-down = ['volume set 0', 'mode main']
 
 [[on-window-detected]]
-	if.app-id = 'com.apple.Preview'
-	if.window-title-regex-substring = '企业微信截图_|WeChatWorkScreenshot_|企业微信.*网页内容|群公告|[0-9a-z]{32}\.gif'
+    if.app-id = 'com.apple.Preview'
+    if.window-title-regex-substring = '企业微信截图_|WeChatWorkScreenshot_|企业微信.*网页内容|群公告|[0-9a-z]{32}\.gif'
     run = 'layout floating'
 [[on-window-detected]]
     if.app-id = 'net.kovidgoyal.kitty'
@@ -234,10 +234,10 @@ automatically-unhide-macos-hidden-apps = false
     if.app-id = 'com.tencent.WeWorkMac'
     run = 'move-node-to-workspace Wework'
 [[on-window-detected]]
-	if.window-title-regex-substring = 'QQ音乐'
+    if.window-title-regex-substring = 'QQ音乐'
     run = 'move-node-to-workspace Music'
 [[on-window-detected]]
-	if.window-title-regex-substring = 'noui test'
+    if.window-title-regex-substring = 'noui test'
     run = 'move-node-to-workspace 10'
     # run = 'layout floating'
 
