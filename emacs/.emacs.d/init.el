@@ -8,7 +8,7 @@
 ;; (setq visible-bell t)
 
 ;; 窗口无边框
-(add-to-list 'default-frame-alist '(undecorated . t))
+;; (add-to-list 'default-frame-alist '(undecorated . t))
 
 
 ;; Themes
@@ -56,6 +56,9 @@
 (set-face-attribute 'variable-pitch nil :font "YaHei Consolas Hybrid" :height 150 :weight 'regular)
 
 (set-locale-environment "zh_CN.UTF-8")
+
+(prefer-coding-system 'utf-8)
+(setq-default buffer-file-coding-system 'utf-8)
 
 ;; MELPA community packages
 ;; Initialize package sources
@@ -261,7 +264,8 @@
   (aq/set-evil-key "jc" 'ace-jump-char-mode)
   (aq/set-evil-key "jl" 'ace-jump-line-mode)
   (aq/set-evil-key "jw" 'ace-jump-word-mode)
-  (aq/set-evil-key "pg" 'go-playground)
+  ;; (aq/set-evil-key "pg" 'go-playground)
+  (aq/set-evil-key "p" 'persp-key-map)
   (aq/set-evil-key ";" 'evil-repeat-find-char))
 
 ;; (use-package evil-collection
@@ -282,6 +286,17 @@
   (evil-collection-init))
 
 (use-package unicad)
+
+;; (use-package persp-mode
+;;   :init
+;;   (setq persp-keymap-prefix nil)
+;;   ;; :custom
+;;   ;; (persp-keymap-prefix nil)
+;;   :config
+;;   (with-eval-after-load "persp-mode-autoloads"
+;;     (setq wg-morph-on nil) ;; switch off animation
+;;     (setq persp-autokill-buffer-on-remove 'kill-weak)
+;;     (add-hook 'window-setup-hook #'(lambda () (persp-mode 1)))))
 
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns x))
@@ -390,6 +405,7 @@
 	(add-to-list 'org-structure-template-alist '("sh" . "src shell"))
 	(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
 	(add-to-list 'org-structure-template-alist '("scm" . "src scheme"))
+	(add-to-list 'org-structure-template-alist '("sql" . "src sql"))
 	(add-to-list 'org-structure-template-alist '("py" . "src python")))
 
 ;; org mode (Refer: org mode guide)
@@ -458,11 +474,15 @@
   ;; https://github.com/bbatsov/projectile/issues/1130#issuecomment-1123237339
   (setq projectile-project-root-files-bottom-up
         (cons "meson.build"
-              (cons "CMakeLists.txt" projectile-project-root-files-bottom-up))))
+              (cons "CMakeLists.txt" projectile-project-root-files-bottom-up)))
+  (add-to-list 'projectile-ignored-projects "/opt/homebrew/")
+  (add-to-list 'projectile-ignored-projects "~/"))
 
 ;;  (setq projectile-switch-project-action 'neotree-projectile-action))
 (use-package counsel-projectile
-  :config (counsel-projectile-mode))
+  :config
+  (projectile-known-projects) ;; counsel-projectile启动时不能正确list project，先临时fix，等修复 https://github.com/ericdanan/counsel-projectile/issues/189
+  (counsel-projectile-mode))
 
 (use-package magit
   :custom
@@ -511,7 +531,15 @@
   :defer t
   :config
   (treemacs-follow-mode t)
-  (treemacs-project-follow-mode t))
+  (treemacs-project-follow-mode t)
+  ;; 解决 perspectives 调用 treemacs hook 参数不匹配问题
+  ;; 待treemacs修复
+  (when (fboundp 'treemacs--remove-treemacs-window-in-new-frames)
+    (remove-hook 'persp-activated-functions #'treemacs--remove-treemacs-window-in-new-frames)
+    (add-hook 'persp-activated-functions
+              (lambda (location-type _frame-or-window _persp)
+                (when (eq location-type 'frame)
+                  (treemacs--remove-treemacs-window-in-new-frames location-type))))))
 (use-package treemacs-evil :after (treemacs evil))
 
 (use-package treemacs-projectile
@@ -554,6 +582,9 @@
   :commands (lsp lsp-deferred)
   :init
   (setq lsp-keymap-prefix "C-c l")
+  :config
+  ;; ignore golang stdlib
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]libexec[/\\\\]")
   :hook ((go-mode . lsp-deferred)
          (yaml-mode . lsp-deferred)
          (c-mode . lsp-deferred)

@@ -8,7 +8,7 @@ end)
 -- end)
 
 hs.loadSpoon("AClock")
-hs.hotkey.bind({"ctrl"}, "T", function()
+hs.hotkey.bind({"ctrl","cmd"}, "T", function()
   spoon.AClock:show()
 end, function ()
   spoon.AClock:hide()
